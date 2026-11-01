@@ -1,19 +1,19 @@
-# ADR-0001 — Restricciones y decisiones recibidas
+# ADR-0001 — Owner constraints and decisions
 
-- Estado: decisiones recibidas del propietario el 1 de noviembre de 2026
-- Origen: instrucciones de apertura de este trabajo; D-01 a D-08 en la [definición](../project-definition.md)
-- Alcance: registra elecciones existentes; no aprueba el diseño completo ni inicia implementación
+- Status: owner decisions received on 1 November 2026
+- Origin: opening instructions for this work; D-01 through D-08 in the [project definition](../project-definition.md)
+- Scope: records existing choices; does not approve the complete design or start implementation
 
-## Contexto y decisión
+## Context and decision
 
-El proyecto busca evidencia presentable de observabilidad para una postulación personal. OpenSearch es el destino principal y RabbitMQ el intermediario persistente. Se contemplan fuentes ONLINE ACS/XML y OFFLINE simuladas, ingesta continua e histórica, recuperación de fallos, preservación de repeticiones legítimas y análisis explicable.
+The project seeks presentable evidence of observability for a personal application. OpenSearch is the primary destination and RabbitMQ the persistent intermediary. It includes ONLINE ACS/XML and simulated OFFLINE sources, continuous and historical ingestion, failure recovery, preservation of legitimate repetition, and explainable analysis.
 
-La migración Elasticsearch → OpenSearch será investigación documental. La arquitectura histórica publicada por ALMA es inspiración, sin asumir vigencia actual. Se debe revisar el alcance con el propietario antes de implementar.
+Elasticsearch → OpenSearch migration will be researched through documentation. ALMA's published historical architecture is an inspiration, without assuming it remains current. Scope must be reviewed with the owner before implementation.
 
-## Opciones y límites
+## Options and boundaries
 
-La elección entre motores y brokers no se reabre en este ADR: fue resuelta por el propietario. Permanecen abiertas las versiones, topología, herramientas de procesamiento y contratos. No hay evidencia de que este diseño replique la infraestructura actual de ALMA.
+Engine and broker choices are not reopened in this ADR: the owner has resolved them. Versions, topology, processing tools, and contracts remain open. There is no evidence that this design replicates ALMA's current infrastructure.
 
-## Consecuencias y validación
+## Consequences and validation
 
-La demo debe mostrar tanto la gestión fiable de eventos como su utilidad para investigar incidentes. El plazo exige una primera versión pequeña de cada capacidad y extensiones diferenciadas. La aceptación se establecerá mediante la revisión de [requisitos](../requirements.md) y [validación](../validation.md).
+The demo must show both reliable event handling and its usefulness for incident investigation. The deadline requires a small first version of each capability and clearly separated extensions. Acceptance will be established by reviewing [requirements](../requirements.md) and [validation](../validation.md).

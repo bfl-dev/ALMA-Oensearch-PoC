@@ -1,35 +1,35 @@
 ---
-name: Tarea trazable
-about: Definición, investigación o trabajo autorizado con criterios verificables
+name: Traceable task
+about: Definition, research, or authorized work with verifiable criteria
 title: ''
 labels: ''
 assignees: ''
 ---
 
-## Objetivo y resultado revisable
+## Objective and reviewable outcome
 
-Describir el comportamiento o documento esperado y su utilidad.
+Describe the expected behavior or document and why it is useful.
 
-## Autorización y alcance
+## Authorization and scope
 
-- Tipo: documentación / diseño / implementación / validación.
-- Revisión de alcance aprobada y referencia a autorización, si corresponde:
-- Incluye:
-- Exclusiones:
-- Archivos o componentes permitidos:
-- Branch propuesta (`<tipo>/<descripcion-en-kebab-case>`):
+- Type: documentation / design / implementation / validation.
+- Approved scope revision and authorization reference, where applicable:
+- Includes:
+- Exclusions:
+- Permitted files or components:
+- Proposed branch (`<type>/<kebab-case-description>`):
 
-## Trazabilidad y dependencias
+## Traceability and dependencies
 
-- Requisitos y escenarios:
-- ADR y contratos:
-- Issues previos y condición para desbloquear:
+- Requirements and scenarios:
+- ADRs and contracts:
+- Prerequisite issues and condition for unblocking:
 
-## Criterios de aceptación
+## Acceptance criteria
 
-- [ ] Resultado observable y comprobable.
-- [ ] Evidencia enlazada y limitaciones documentadas.
+- [ ] Observable, verifiable outcome.
+- [ ] Linked evidence and documented limitations.
 
-## Validación y entrega
+## Validation and delivery
 
-Indicar comprobaciones pertinentes, resultado esperado y evidencia a entregar. Una tarea de implementación debe esperar autorización explícita del propietario y contratos estables.
+Specify relevant checks, expected results, and required evidence. An implementation task must wait for explicit owner authorization and stable contracts.

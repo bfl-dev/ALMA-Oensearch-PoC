@@ -1,58 +1,58 @@
-# Validación y demostración
+# Validation and demonstration
 
-**Estado:** plan propuesto. No se han ejecutado pruebas de software ni medido estas capacidades.
+**Status:** proposed plan. No software tests have been executed and these capabilities have not been measured.
 
-## Parámetros tentativos para revisar
+## Tentative parameters for review
 
-Los valores siguientes son objetivos de aceptación locales propuestos, no rendimiento observado ni requisitos atribuidos a ALMA. Ajustarlos con recursos y versiones conocidos, antes de ejecutar.
+The values below are proposed local acceptance targets, not observed performance or requirements attributed to ALMA. Adjust them once resources and versions are known, before execution.
 
-| Parámetro | Propuesta inicial |
+| Parameter | Initial proposal |
 | --- | --- |
-| Corpus determinista | 1.000 ocurrencias ONLINE y 1.000 OFFLINE, con manifiesto independiente |
-| Repetición legítima | Incluir al menos un par ACS de XML y timestamp idénticos con coordenadas distintas |
-| Históricos | Reprocesar el corpus dos veces e incluir solapamiento con lectura continua |
-| Flujo continuo | 10 eventos/s agregados durante 2 minutos, en un escenario separado del conteo de corpus |
-| Interrupción de OpenSearch | 60 segundos dentro de la ejecución continua |
-| Recuperación | Backlog drenado en 120 segundos tras restauración, con recursos declarados |
-| Pérdida/duplicación | Cero eventos válidos aceptados perdidos; cero copias adicionales por identidad tras converger |
-| Búsqueda | Consultas reproducibles correctas; registrar tiempos sin prometer un SLO aún |
-| Retención y replay | Definir explícitamente ventana soportada; no probar solo en índices recién creados |
+| Deterministic corpus | 1,000 ONLINE and 1,000 OFFLINE occurrences, with an independent manifest |
+| Legitimate repetition | Include at least one ACS pair with identical XML and timestamps but distinct coordinates |
+| Historical data | Reprocess the corpus twice and include overlap with continuous reads |
+| Continuous flow | 10 events/s in aggregate for 2 minutes, in a scenario separate from corpus counting |
+| OpenSearch outage | 60 seconds during continuous execution |
+| Recovery | Backlog drained within 120 seconds after restoration, with declared resources |
+| Loss/duplication | Zero accepted valid events lost; zero additional copies per identity after convergence |
+| Search | Correct reproducible queries; record timings without promising an SLO yet |
+| Retention and replay | Explicitly define the supported window; do not test only against newly created indexes |
 
-Un escenario que falle sigue fallando aunque el total global coincida por compensación entre pérdidas y duplicados.
+A failing scenario still fails even if the global total matches because losses and duplicates cancel each other out.
 
-## Oráculo y evidencia
+## Oracle and evidence
 
-El manifiesto del corpus define las ocurrencias originales y sus coordenadas antes del pipeline. Comparar conjuntos de identidades, multiplicidad y contenido contra ese manifiesto; no generar el oráculo únicamente con la misma función de identificación que se está validando.
+The corpus manifest defines original occurrences and their coordinates before the pipeline. Compare identity sets, multiplicity, and content against that manifest; do not generate the oracle solely with the same identification function being validated.
 
-Registrar separadamente: producidos, disponibles en origen persistente, aceptados durablemente por el broker, indexados, pendientes, puestos en cuarentena y reintentados. Los descartes no pueden ocultarse dentro de un contador de procesados.
+Record separately: produced, available in persistent source storage, durably accepted by the broker, indexed, pending, quarantined, and retried. Dropped events cannot be hidden inside a processed counter.
 
-Esperar la condición documentada de visibilidad de búsqueda y el final de los reintentos antes de contar. Un evento reconocido como ya procesado necesita validación de identidad/contenido/destino conforme al contrato. Los inválidos se contabilizan en cuarentena, no como eventos válidos indexados.
+Wait for the documented search-visibility condition and completion of retries before counting. An event recognized as already processed requires identity/content/destination validation according to the contract. Invalid inputs are counted in quarantine, not as valid indexed events.
 
-## Matriz mínima
+## Minimum matrix
 
-| Escenario | Criterios | Evidencia futura |
+| Scenario | Criteria | Future evidence |
 | --- | --- | --- |
-| Dos fuentes y corpus controlado | CA-01, CA-06 | Manifiesto, consultas y exportación de resultados |
-| Replay y solapamiento | CA-02, CA-05 | Conjuntos antes/después, coordenadas y casos de repetición |
-| Caída de adaptador en confirmación | CA-03 | Checkpoints antes/después y reconciliación de identidades |
-| Caída de consumidor y respuesta perdida | CA-03 | Punto de fallo, reentrega y estado final |
-| Interrupción OpenSearch | CA-04 | Backlog/tiempo y reconciliación al recuperar |
-| Reinicio de RabbitMQ con pendientes | CA-04 | Estado durable y resultados después del reinicio |
-| Bulk parcialmente fallido y registro inválido | CA-11 | Resultado por evento y cuarentena recuperable |
-| Incidente con eventos tardíos | CA-07, CA-08 | Línea temporal, regla explicada y caso negativo |
-| Patrones de mensajes | CA-09 | Grupos, frecuencias, ejemplos y límites |
-| Investigación y reproducción | CA-10, CA-12 | Informe con fuentes e instrucciones verificadas |
+| Two sources and controlled corpus | CA-01, CA-06 | Manifest, queries, and exported results |
+| Replay and overlap | CA-02, CA-05 | Before/after sets, coordinates, and repetition cases |
+| Adapter failure at confirmation boundary | CA-03 | Before/after checkpoints and identity reconciliation |
+| Consumer failure and lost response | CA-03 | Failure point, redelivery, and final state |
+| OpenSearch outage | CA-04 | Backlog/timing and reconciliation after recovery |
+| RabbitMQ restart with pending messages | CA-04 | Durable state and post-restart results |
+| Partially failed bulk and invalid record | CA-11 | Per-event results and recoverable quarantine |
+| Incident with late events | CA-07, CA-08 | Timeline, explained rule, and negative case |
+| Message patterns | CA-09 | Groups, frequencies, examples, and limits |
+| Research and reproduction | CA-10, CA-12 | Report with sources and verified instructions |
 
-Cada ejecución debe identificar commit, versiones, hardware, configuración y datos, comando/procedimiento utilizado, resultado esperado/obtenido y enlaces a evidencia. Los scripts y pruebas se escribirán cuando se autorice implementar.
+Each run must identify the commit, versions, hardware, configuration and data, command/procedure used, expected/actual result, and evidence links. Scripts and tests will be written when implementation is authorized.
 
-## Guion de presentación propuesto
+## Proposed presentation script
 
-1. Explicar problema, inspiración histórica y alcance independiente del proyecto.
-2. Mostrar ambas fuentes, una consulta conocida y visualizaciones.
-3. Reconstruir el incidente y justificar la correlación con sus eventos de soporte.
-4. Mostrar patrón recurrente con ejemplos; distinguir agrupación analítica de identidad de ocurrencia.
-5. Interrumpir OpenSearch, observar backlog, restaurar y verificar recuperación.
-6. Reprocesar históricos y mostrar que se conservan repeticiones legítimas sin duplicados técnicos.
-7. Exponer evidencia de fallos abruptos, investigación de migración y limitaciones pendientes.
+1. Explain the problem, historical inspiration, and independent project scope.
+2. Show both sources, a known query, and visualizations.
+3. Reconstruct the incident and justify the correlation using supporting events.
+4. Show a recurring pattern with examples; distinguish analytical grouping from occurrence identity.
+5. Interrupt OpenSearch, observe backlog, restore service, and verify recovery.
+6. Reprocess historical data and show that legitimate repetition survives without technical duplicates.
+7. Present abrupt-failure evidence, migration research, and pending limitations.
 
-El video puede resumir pruebas más largas, pero debe enlazar su evidencia reproducible. Un README con metas no constituye una demo ejecutada.
+A video may summarize longer tests but must link reproducible evidence. A README listing goals is not an executed demo.

@@ -1,30 +1,30 @@
-# ADR-NNNN — Título de la decisión
+# ADR-NNNN — Decision title
 
-- Estado: propuesto
-- Fecha: pendiente
-- Requisitos relacionados: pendiente
-- Aprobación y referencia: pendiente
+- Status: proposed
+- Date: pending
+- Related requirements: pending
+- Approval and reference: pending
 
-## Contexto
+## Context
 
-Problema, restricciones y evidencia que hacen necesaria la decisión.
+The problem, constraints, and evidence that make the decision necessary.
 
-## Opciones consideradas
+## Options considered
 
-Alternativas viables y criterio para compararlas. No incluir opciones ficticias para justificar una preferencia.
+Viable alternatives and comparison criteria. Do not include artificial options merely to justify a preference.
 
-## Decisión propuesta
+## Proposed decision
 
-Elección y alcance exacto; indicar lo que sigue abierto.
+Choice and exact scope; identify what remains open.
 
-## Consecuencias
+## Consequences
 
-Beneficios, coste operativo, limitaciones y riesgos concretos.
+Benefits, operational cost, limitations, and concrete risks.
 
-## Validación
+## Validation
 
-Escenarios que confirmarían o invalidarían la decisión, y evidencias esperadas.
+Scenarios that would confirm or invalidate the decision, and expected evidence.
 
-## Referencias
+## References
 
-Fuentes verificadas y decisiones anteriores relacionadas.
+Verified sources and related earlier decisions.

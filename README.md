@@ -31,7 +31,7 @@ Start at the [documentation index](docs/README.md), then review the [project sco
 | Milestones, dependencies and agent tasks | [Delivery plan](docs/planning/README.md) |
 | Historical paper and pending internship reference | [References](docs/references/README.md) |
 
-Detailed working documentation is currently in Spanish. The repository URL retains its original spelling, `ALMA-Oensearch-PoC`.
+English is the working language for documentation, diagrams, templates, issues, pull requests, and commit messages. The repository URL retains its original spelling, `ALMA-Oensearch-PoC`.
 
 ## Target and next gate
 

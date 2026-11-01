@@ -1,79 +1,79 @@
-# Definición formal del proyecto
+# Formal project definition
 
-**Estado:** propuesto para revisión. **Responsable de aprobación:** propietario del proyecto. **Implementación:** pendiente de autorización.
+**Status:** proposed for review. **Approval owner:** project owner. **Implementation:** awaiting authorization.
 
-## Propósito
+## Purpose
 
-Construir un proyecto personal demostrable que fortalezca una postulación a la práctica ALMA 2027 mediante evidencia de diseño, recuperación de fallos e investigación de incidentes basada en logs. La primera entrega debe ser comprensible desde GitHub y reproducible en un entorno local acotado.
+Build a demonstrable personal project that strengthens an ALMA 2027 internship application through evidence of design, failure recovery, and log-based incident investigation. The first delivery must be understandable from GitHub and reproducible in a bounded local environment.
 
-La observabilidad se acota inicialmente a logs y al estado operativo del pipeline. Una plataforma completa de métricas y trazas queda fuera de la demo propuesta.
+Observability is initially limited to logs and the operational state of the pipeline. A complete metrics and tracing platform is outside the proposed demo.
 
-## Decisiones recibidas
+## Owner decisions
 
-| ID | Decisión del propietario |
+| ID | Owner decision |
 | --- | --- |
-| D-01 | OpenSearch será el motor principal; la migración desde Elasticsearch se investigará documentalmente |
-| D-02 | Inspiración en arquitectura histórica publicada por ALMA, sin inferir infraestructura actual |
-| D-03 | Dos fuentes: ACS ONLINE real o mock con XML, y OFFLINE mediante simulador de aplicaciones web/API |
-| D-04 | RabbitMQ como intermediario de mensajería persistente |
-| D-05 | Ingesta continua y reprocesamiento histórico |
-| D-06 | Recuperación tras fallos abruptos e interrupciones temporales de OpenSearch |
-| D-07 | Evitar duplicados del pipeline preservando eventos legítimamente repetidos de ACS |
-| D-08 | Búsqueda, visualización, reconstrucción de incidentes, correlación automática explicable y descubrimiento de patrones |
+| D-01 | OpenSearch will be the main engine; migration from Elasticsearch will be researched through documentation |
+| D-02 | Draw inspiration from ALMA's published historical architecture without inferring its current infrastructure |
+| D-03 | Two sources: real ACS ONLINE or an XML mock, and OFFLINE through a web/API application simulator |
+| D-04 | RabbitMQ as the persistent messaging intermediary |
+| D-05 | Continuous ingestion and historical reprocessing |
+| D-06 | Recovery after abrupt failures and temporary OpenSearch outages |
+| D-07 | Avoid pipeline-generated duplicates while preserving legitimately repeated ACS events |
+| D-08 | Search, visualization, incident reconstruction, explainable automatic correlation, and pattern discovery |
 
-El orden de trabajo solicitado es: repositorio → alcance/requisitos → C4/ADR → contratos → hitos/issues/tareas → implementación y pruebas autorizadas.
+The requested work order is: repository → scope/requirements → C4/ADRs → contracts → milestones/issues/tasks → authorized implementation and testing.
 
-## Demo esencial propuesta
+## Proposed essential demo
 
-No se eliminan capacidades de D-08: se reduce la complejidad de su primera versión.
+No D-08 capabilities are removed: their first versions are kept small.
 
-| Área | Primera versión propuesta | Evidencia esperada |
+| Area | Proposed first version | Expected evidence |
 | --- | --- | --- |
-| ONLINE | Evaluar primero un componente ACS real; recurrir a mock XML documentado si sus dependencias impiden la demo | Procedencia, versión y limitaciones del productor; nunca afirmar integración real si se usa mock |
-| OFFLINE | Simulador pequeño de una aplicación/API, con operación normal, error y recuperación | Eventos reproducibles con identificadores de solicitud/operación |
-| Transporte | Una instancia local persistente de RabbitMQ y consumidores acotados | Recuperación de mensajes pendientes después de reinicio |
-| Indexación | OpenSearch y visualización mediante Dashboards, topología local por evaluar | Búsquedas reproducibles y estado de ingesta visible |
-| Replay | Releer un archivo histórico inmutable y solaparlo con ingesta continua | Mismo conjunto de identidades tras una o varias relecturas |
-| Incidentes | Un incidente sintético conocido con contexto anterior y posterior | Línea temporal, eventos de soporte y límites de la explicación |
-| Correlación | Una o dos reglas deterministas usando identificadores y ventanas temporales | Regla/version, eventos relacionados y razón del vínculo |
-| Patrones | Agrupación de mensajes normalizados, frecuencia y ejemplos inspeccionables | Al menos un patrón recurrente y un mensaje fuera del grupo |
-| Migración | Informe breve de compatibilidad y riesgos con fuentes | Separación entre hechos documentados, hipótesis y pruebas futuras |
+| ONLINE | Evaluate a real ACS component first; fall back to a documented XML mock if dependencies block the demo | Producer provenance, version, and limitations; never claim real integration when using a mock |
+| OFFLINE | Small application/API simulator with normal operation, failure, and recovery | Reproducible events with request/operation identifiers |
+| Transport | One persistent local RabbitMQ instance and bounded consumers | Recovery of pending messages after restart |
+| Indexing | OpenSearch with Dashboards for visualization; local topology to evaluate | Reproducible searches and visible ingestion status |
+| Replay | Reread an immutable historical file, overlapping with continuous ingestion | Same set of identities after one or more rereads |
+| Incidents | One known synthetic incident with preceding and subsequent context | Timeline, supporting events, and limits of the explanation |
+| Correlation | One or two deterministic rules using identifiers and time windows | Rule/version, related events, and reason for the link |
+| Patterns | Group normalized messages, report frequency, and provide inspectable examples | At least one recurring pattern and one message outside the group |
+| Migration | Brief compatibility and risk report with sources | Distinction between documented facts, hypotheses, and future tests |
 
-Los nombres ONLINE/OFFLINE identifican las familias de origen, no modos conectado/desconectado. No se inventará un identificador compartido entre fuentes para aparentar correlación real: cualquier vínculo sintético debe declararse como parte del escenario.
+ONLINE/OFFLINE identify source families, not connected/disconnected modes. Do not invent a shared identifier between sources to make correlation appear real: any synthetic link must be declared as part of the scenario.
 
-## Extensiones propuestas
+## Proposed extensions
 
-- Clústeres distribuidos, alta disponibilidad y pruebas de pérdida de nodos.
-- Más formatos, fuentes y escenarios operacionales; integración ACS más amplia tras un mock inicial.
-- Detección de anomalías, embeddings, aprendizaje automático y process mining.
-- Interfaz propia, alertas externas, SSO/RBAC avanzado, métricas/trazas distribuidas y despliegue remoto.
-- Migración ejecutada desde Elasticsearch: fuera del alcance solicitado; requeriría un cambio explícito.
+- Distributed clusters, high availability, and node-loss testing.
+- More formats, sources, and operational scenarios; broader ACS integration after an initial mock.
+- Anomaly detection, embeddings, machine learning, and process mining.
+- Custom UI, external alerts, advanced SSO/RBAC, distributed metrics/traces, and remote deployment.
+- An executed Elasticsearch migration: outside the requested scope and requiring an explicit change.
 
-Estas extensiones no son condición para declarar terminada la demo esencial.
+These extensions are not prerequisites for completing the essential demo.
 
-## Límites de las garantías propuestas
+## Boundaries of the proposed guarantees
 
-El objetivo es recuperar eventos disponibles en una fuente persistente o aceptados por el transporte durable, dentro del volumen y ventana de interrupción acordados. Se exige definir el punto exacto de aceptación y de avance del checkpoint antes de implementar. No se promete entrega exactamente una vez de extremo a extremo.
+The goal is to recover events available in a persistent source or accepted by durable transport, within the agreed volume and outage window. The exact acceptance point and checkpoint advancement rule must be defined before implementation. End-to-end exactly-once delivery is not promised.
 
-La demo debe cubrir la terminación abrupta del productor/adaptador, del consumidor y el reinicio del broker conservando almacenamiento, además de indisponibilidad temporal de OpenSearch. La destrucción de volúmenes, pérdida física de disco, borrado de fuentes y un backlog ilimitado quedan fuera de la garantía propuesta y deben declararse en la entrega.
+The demo must cover abrupt producer/adapter and consumer termination, broker restart with storage retained, and temporary OpenSearch unavailability. Volume destruction, physical disk loss, source deletion, and an unlimited backlog are outside the proposed guarantee and must be disclosed in the delivery.
 
-## Entrega antes del 3 de noviembre
+## Delivery before 3 November
 
-Se interpreta como fecha objetivo el **2 de noviembre de 2026, America/Santiago**. El plazo obliga a priorizar y medir; no sustituye la revisión de alcance ni autoriza implementación.
+The target is interpreted as **2 November 2026, America/Santiago**. The deadline requires prioritization and measurement; it does not replace scope review or authorize implementation.
 
-Propuesta: documentar el 1 de noviembre, cerrar decisiones y contratos al inicio del trabajo siguiente, y ejecutar/demo el 2 únicamente si se autoriza y el entorno lo permite. Si falta evidencia, publicar el estado real y el pendiente; no etiquetar la demo como completa.
+Proposal: document on 1 November, close decisions and contracts at the start of the next work session, and implement/demonstrate on 2 November only if authorized and supported by the environment. If evidence is missing, publish the actual status and remaining work; do not label the demo complete.
 
-## Registro de revisión
+## Review record
 
-| Punto pendiente | Propuesta a revisar | Estado |
+| Open item | Proposal to review | Status |
 | --- | --- | --- |
-| Alcance esencial | La tabla de primera versión anterior | Pendiente |
-| ACS real frente a mock | Priorizar real con investigación acotada; registrar el bloqueo antes de pasar a mock | Pendiente de concretar esfuerzo y fuente XML |
-| Recursos y topología | Entorno local sencillo; definir número de nodos y recursos con el equipo disponible | Pendiente |
-| Correlación y patrones | Reglas explicables y agrupación/frecuencias, sin ML inicialmente | Pendiente |
-| Garantías | Fallos de procesos y reinicio con datos persistidos, sin pérdida de almacenamiento | Pendiente |
-| Aceptación cuantitativa | Parámetros tentativos en el plan de validación | Pendiente |
-| Referencia de práctica | Obtener y leer `alma-internship.md` | Pendiente |
-| Autorización de implementación | Instrucción explícita del propietario después de revisar alcance | No otorgada |
+| Essential scope | First-version table above | Pending |
+| Real ACS versus mock | Prioritize real ACS with bounded investigation; record the blocker before switching to a mock | Effort limit and XML source to define |
+| Resources and topology | Simple local environment; define node count and resources using available hardware | Pending |
+| Correlation and patterns | Explainable rules and grouping/frequencies, initially without ML | Pending |
+| Guarantees | Process failures and restart with persisted data, excluding storage loss | Pending |
+| Quantitative acceptance | Tentative parameters in the validation plan | Pending |
+| Internship reference | Obtain and read `alma-internship.md` | Pending |
+| Implementation authorization | Explicit owner instruction after scope review | Not granted |
 
-Registro de aprobación: **ninguno todavía**. Cuando exista, indicar fecha, mensaje/PR que la respalda, versión documental aprobada y cambios pendientes.
+Approval record: **none yet**. When granted, record the date, supporting message/PR, approved documentation revision, and outstanding changes.

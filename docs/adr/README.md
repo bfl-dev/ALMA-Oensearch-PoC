@@ -1,10 +1,10 @@
 # Architecture Decision Records
 
-Un ADR registra contexto, elección, alternativas, consecuencias y validación necesaria. No se consideran aprobadas propuestas por el hecho de estar escritas.
+An ADR records context, a choice, alternatives, consequences, and required validation. Writing a proposal does not make it approved.
 
-| ADR | Tema | Estado |
+| ADR | Topic | Status |
 | --- | --- | --- |
-| [0001](0001-project-constraints.md) | Restricciones tecnológicas y límites recibidos | Decisiones recibidas; no es aprobación del alcance completo |
-| [0002](0002-recovery-and-event-identity.md) | Recuperación e identidad de eventos | Propuesto; requiere revisión |
+| [0001](0001-project-constraints.md) | Owner technology constraints and boundaries | Owner decisions; not approval of the full scope |
+| [0002](0002-recovery-and-event-identity.md) | Recovery and event identity | Proposed; requires review |
 
-Usar la [plantilla](template.md) para decisiones nuevas. Evitar un ADR por detalle menor. Antes de implementar deben resolverse al menos garantías de recuperación/identidad, herramienta de procesamiento y topología local; pueden agruparse si la justificación es breve.
+Use the [template](template.md) for new decisions. Avoid one ADR per minor detail. Before implementation, resolve at least recovery/identity guarantees, the processing tool, and the local topology; these may be grouped if the rationale is brief.

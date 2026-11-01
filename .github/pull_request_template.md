@@ -1,18 +1,18 @@
-## Problema y resultado
+## Problem and outcome
 
-Explicar qué cambia y por qué ayuda al proyecto. Identificar propuestas, decisiones aprobadas y resultados ejecutados.
+Explain what changes and why it helps the project. Identify proposals, approved decisions, and executed results.
 
-## Alcance y trazabilidad
+## Scope and traceability
 
-- Issue/tarea:
-- Requisitos/escenarios:
-- ADR/contratos:
-- Autorización de implementación, si corresponde:
+- Issue/task:
+- Requirements/scenarios:
+- ADRs/contracts:
+- Implementation authorization, where applicable:
 
-## Validación
+## Validation
 
-Indicar comprobaciones realizadas y evidencia. No presentar criterios escritos ni pruebas pendientes como resultados.
+Describe completed checks and evidence. Do not present written criteria or pending tests as results.
 
-## Pendientes para revisión
+## Open review items
 
-Decisiones abiertas, limitaciones y riesgos concretos. Para PR documentales, enlazar el índice de `docs/` y el documento de alcance.
+Open decisions, limitations, and concrete risks. For documentation PRs, link the `docs/` index and scope document.

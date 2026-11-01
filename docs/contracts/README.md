@@ -1,50 +1,50 @@
-# Contratos entre componentes
+# Component contracts
 
-**Estado:** inventario propuesto, no contrato de software aprobado. No hay schemas, APIs ni configuración ejecutable en esta etapa.
+**Status:** proposed inventory, not an approved software contract. There are no schemas, APIs, or executable configuration at this stage.
 
-## Límites a especificar
+## Boundaries to specify
 
-| ID | Límite | Contenido mínimo del contrato | Aceptación |
+| ID | Boundary | Minimum contract content | Acceptance |
 | --- | --- | --- | --- |
-| CT-01 | Fuente/archivo → adaptador | Formato y framing XML/JSON, encoding, reloj, procedencia, identidad estable de ocurrencia, rotación y replay | CA-01, CA-02, CA-05 |
-| CT-02 | Adaptador → RabbitMQ | Envelope versionado, routing, persistencia, confirmación durable, checkpoint, backpressure y mensaje no enrutable | CA-03, CA-04 |
-| CT-03 | RabbitMQ → procesador → OpenSearch/cuarentena | Validación, mappings, ID/índice, bulk parcial, reintentos, confirmación y disposición durable de errores permanentes | CA-03, CA-04, CA-11 |
-| CT-04 | Eventos almacenados → análisis/visualización | Consulta temporal, referencias originales, explicación de correlación y salida de patrones | CA-06 a CA-09 |
+| CT-01 | Source/file → adapter | XML/JSON format and framing, encoding, clock, provenance, stable occurrence identity, rotation, and replay | CA-01, CA-02, CA-05 |
+| CT-02 | Adapter → RabbitMQ | Versioned envelope, routing, persistence, durable confirmation, checkpoint, backpressure, and unroutable messages | CA-03, CA-04 |
+| CT-03 | RabbitMQ → processor → OpenSearch/quarantine | Validation, mappings, ID/index, partial bulk results, retries, acknowledgment, and durable disposition of permanent errors | CA-03, CA-04, CA-11 |
+| CT-04 | Stored events → analysis/visualization | Time-based queries, original references, correlation explanations, and pattern output | CA-06 through CA-09 |
 
-Los contratos describen fronteras lógicas; no obligan a crear cuatro servicios.
+Contracts describe logical boundaries; they do not require four services.
 
-## Modelo mínimo candidato
+## Candidate minimum model
 
-| Concepto | Semántica a acordar |
+| Concept | Semantics to agree on |
 | --- | --- |
-| `schema_version` | Versión del envelope; política de compatibilidad y rechazo de versiones desconocidas |
-| `event_id` | Identidad de una ocurrencia original, estable en reentrega/reinicio/replay |
-| `source` | Familia ONLINE/OFFLINE, productor, entorno y coordenadas durables de origen |
-| `event_time` | Tiempo declarado por el origen, formato/zona y tratamiento de ausencia o error |
-| `ingested_at` | Tiempo de ingesta, distinto del tiempo original; no participa en identidad |
-| `severity`, `component`, `message` | Campos normalizados con procedencia y preservación de valores no mapeados |
-| `raw` o referencia durable | Recuperación del registro original sin reconstruirlo desde una plantilla |
-| `correlation_keys` | IDs observados en origen o inferidos explícitamente, con su procedencia |
-| Metadatos de procesamiento | Versión del parser, replay/intent y diagnóstico; separados de la identidad original |
+| `schema_version` | Envelope version; compatibility policy and rejection of unknown versions |
+| `event_id` | Identity of an original occurrence, stable across redelivery/restart/replay |
+| `source` | ONLINE/OFFLINE family, producer, environment, and durable source coordinates |
+| `event_time` | Time declared by the source, format/time zone, and handling of missing or invalid values |
+| `ingested_at` | Ingestion time, distinct from original time; not part of identity |
+| `severity`, `component`, `message` | Normalized fields with provenance and preservation of unmapped values |
+| `raw` or durable reference | Retrieval of the original record without reconstructing it from a template |
+| `correlation_keys` | IDs observed at the source or explicitly inferred, with their provenance |
+| Processing metadata | Parser version, replay/attempt, and diagnostics; separate from original identity |
 
-Los nombres de campos son candidatos. Longitudes, tipos, obligatorios/opcionales, timestamps inválidos, XML multilinea, caracteres y límites de tamaño deberán fijarse con ejemplos reales o fixtures documentados antes de implementar.
+Field names are candidates. Lengths, types, required/optional fields, invalid timestamps, multiline XML, characters, and size limits must be fixed using real examples or documented fixtures before implementation.
 
-## Invariantes de identidad
+## Identity invariants
 
-- Mismo evento de origen, misma identidad, aunque cambie el número de intentos o el modo de ingesta.
-- Ocurrencias distintas, identidades distintas, aunque todos sus campos de negocio coincidan.
-- El tiempo de ingesta, delivery tag, bandera de redelivery o UUID por intento no determinan identidad de origen.
-- Un hash del contenido puede comprobar integridad, pero no distingue ocurrencias idénticas.
-- El replay conserva identidad de archivo/generación y posición; no infiere automáticamente que dos archivos iguales representan los mismos eventos.
-- La identidad se conserva también en cuarentena y su reproceso. El índice de destino y la ventana de retención forman parte del contrato de idempotencia.
+- Same source event, same identity, even if attempt count or ingestion mode changes.
+- Distinct occurrences, distinct identities, even if every business field matches.
+- Ingestion time, delivery tag, redelivery flag, or a per-attempt UUID do not determine source identity.
+- A content hash may verify integrity but cannot distinguish identical occurrences.
+- Replay preserves file/generation identity and position; it does not automatically infer that two equal files represent the same events.
+- Identity is also preserved through quarantine and reprocessing. The target index and retention window are part of the idempotency contract.
 
-## Resultado mínimo del análisis
+## Minimum analysis output
 
-Una correlación debe incluir identificadores de eventos, regla y versión, condiciones cumplidas, ventana y explicación, indicando si el vínculo es observado o inferido. Un patrón debe incluir su criterio/plantilla, frecuencia y ejemplos originales. Ninguna salida modifica ni elimina los eventos de origen.
+A correlation must include event identifiers, rule and version, satisfied conditions, window, and explanation, stating whether the link is observed or inferred. A pattern must include its criterion/template, frequency, and original examples. Neither output changes or deletes source events.
 
-## Entregables de la siguiente etapa
+## Next-stage deliverables
 
-1. Tabla de campos aprobada, ejemplos ONLINE/OFFLINE válidos e inválidos y política de evolución.
-2. Schema del envelope y catálogo de errores/disposiciones, después de aprobar alcance.
-3. Reglas exactas de identidad/checkpoint, confirmaciones y destino, consistentes con ADR-0002.
-4. Ejemplos verificables de correlación y patrón que implementen CA-08/CA-09.
+1. Approved field table, valid and invalid ONLINE/OFFLINE examples, and evolution policy.
+2. Envelope schema and error/disposition catalog, after scope approval.
+3. Exact identity/checkpoint, confirmation, and destination rules consistent with ADR-0002.
+4. Verifiable correlation and pattern examples implementing CA-08/CA-09.

@@ -1,72 +1,72 @@
-# Arquitectura: vistas C4 y evaluación pendiente
+# Architecture: C4 views and pending evaluation
 
-**Estado:** conceptual/propuesto. No representa una arquitectura implementada ni la infraestructura actual de ALMA. [ADR-0001](../adr/0001-project-constraints.md) recoge restricciones recibidas; [ADR-0002](../adr/0002-recovery-and-event-identity.md) plantea cómo evaluarlas.
+**Status:** conceptual/proposed. This does not represent an implemented architecture or ALMA's current infrastructure. [ADR-0001](../adr/0001-project-constraints.md) records owner constraints; [ADR-0002](../adr/0002-recovery-and-event-identity.md) proposes how to evaluate them.
 
-## C4 nivel 1 — Contexto
+## C4 level 1 — System context
 
-| Elemento | Tipo C4 | Responsabilidad y límite |
+| Element | C4 type | Responsibility and boundary |
 | --- | --- | --- |
-| Revisor/desarrollador | Persona | Buscar logs, investigar incidentes e inspeccionar la evidencia |
-| PoC de observabilidad | Sistema bajo diseño | Transportar, procesar, almacenar y analizar logs |
-| Fuente ACS ONLINE | Sistema externo al PoC | Componente real o mock identificado que produce XML |
-| Aplicación/API OFFLINE simulada | Sistema externo al PoC | Producir eventos de operación y fallo reproducibles |
-| Archivos históricos | Recurso externo de entrada | Corpus inmutable identificado, disponible para replay |
+| Reviewer/developer | Person | Search logs, investigate incidents, and inspect evidence |
+| Observability PoC | System under design | Transport, process, store, and analyze logs |
+| ACS ONLINE source | External system | Identified real component or mock producing XML |
+| Simulated OFFLINE application/API | External system | Produce reproducible operational and failure events |
+| Historical files | External input resource | Identified immutable corpus available for replay |
 
-Ni sistemas productivos de ALMA ni su operación forman parte de este contexto de ejecución.
+ALMA production systems and operations are not part of this execution context.
 
-## C4 nivel 2 — Contenedores lógicos propuestos
+## C4 level 2 — Proposed logical containers
 
-Los contenedores C4 representan unidades de ejecución/datos. Este diagrama no impone un proceso separado para cada función ni una topología física. Los adaptadores y el replay pueden compartir una sola herramienta.
+C4 containers represent execution/data units. This diagram does not require a separate process for every function or impose a physical topology. Adapters and replay can share one tool.
 
 ```mermaid
 flowchart TD
-    online["Fuente externa: ACS ONLINE real o mock XML"]
-    offline["Fuente externa: simulador OFFLINE web/API"]
-    history["Entrada externa: archivos históricos"]
-    reviewer["Persona: revisor o desarrollador"]
-    subgraph poc["Sistema: PoC de observabilidad"]
-        adapters["Adaptadores de fuente e ingesta histórica"]
-        sourceState[("Estado persistente: identidad y checkpoints")]
-        broker[("RabbitMQ: transporte persistente")]
-        worker["Procesador e indexador"]
-        quarantine[("Cuarentena durable: tecnología pendiente")]
-        search[("OpenSearch: eventos y resultados")]
-        dashboard["OpenSearch Dashboards: búsqueda y visualización"]
-        analysis["Análisis: incidentes, correlación y patrones"]
-        adapters <-->|"Progreso e identidad"| sourceState
-        adapters -->|"Eventos y confirmaciones de publicación"| broker
-        broker <-->|"Entrega y confirmación de procesamiento"| worker
-        worker -->|"Indexación y resultado por evento"| search
-        worker -->|"Entradas no procesables y motivo"| quarantine
-        dashboard -->|"Consultas"| search
-        analysis <-->|"Consulta y resultados explicables"| search
+    online["External source: ACS ONLINE real component or XML mock"]
+    offline["External source: OFFLINE web/API simulator"]
+    history["External input: historical files"]
+    reviewer["Person: reviewer or developer"]
+    subgraph poc["System: observability PoC"]
+        adapters["Source adapters and historical ingestion"]
+        sourceState[("Persistent state: identity and checkpoints")]
+        broker[("RabbitMQ: persistent transport")]
+        worker["Processor and indexer"]
+        quarantine[("Durable quarantine: technology pending")]
+        search[("OpenSearch: events and results")]
+        dashboard["OpenSearch Dashboards: search and visualization"]
+        analysis["Analysis: incidents, correlation, and patterns"]
+        adapters <-->|"Progress and identity"| sourceState
+        adapters -->|"Events and publisher confirms"| broker
+        broker <-->|"Delivery and processing acknowledgments"| worker
+        worker -->|"Indexing and per-event result"| search
+        worker -->|"Unprocessable inputs and reason"| quarantine
+        dashboard -->|"Queries"| search
+        analysis <-->|"Queries and explainable results"| search
     end
     online -->|"XML"| adapters
-    offline -->|"Logs de aplicación"| adapters
-    history -->|"Replay con identidad original"| adapters
-    reviewer -->|"Investigar"| dashboard
-    reviewer -->|"Ejecutar análisis"| analysis
+    offline -->|"Application logs"| adapters
+    history -->|"Replay with original identity"| adapters
+    reviewer -->|"Investigate"| dashboard
+    reviewer -->|"Run analysis"| analysis
 ```
 
-La ubicación de la normalización, el almacenamiento de raw y cuarentena, y la forma de ejecutar análisis siguen abiertas. El procesamiento puede ser una aplicación pequeña o una herramienta existente; Logstash no se da por obligatorio. OFFLINE pasa por RabbitMQ por decisión de este PoC, no por una afirmación sobre el sistema histórico.
+Normalization placement, raw/quarantine storage, and how analysis runs remain open. Processing may use a small application or an existing tool; Logstash is not assumed mandatory. OFFLINE goes through RabbitMQ by this PoC's design decision, not as a claim about the historical system.
 
-## Nivel 3 y despliegue
+## Level 3 and deployment
 
-No se requiere nivel 4. El nivel 3 se añadirá solo si aclara responsabilidades internas del adaptador/indexador. Una vista de despliegue posterior fijará nodos, volúmenes, puertos, recursos, versiones y exposición local. La demo propuesta no requiere Kubernetes ni múltiples hosts.
+Level 4 is not required. Add level 3 only if it clarifies adapter/indexer internal responsibilities. A later deployment view will fix nodes, volumes, ports, resources, versions, and local exposure. The proposed demo does not require Kubernetes or multiple hosts.
 
-## Preguntas para evaluar antes de cerrar la arquitectura
+## Questions to evaluate before finalizing the architecture
 
-| Pregunta | Evidencia o decisión necesaria |
+| Question | Required evidence or decision |
 | --- | --- |
-| ¿Qué componente ACS real es viable en el plazo? | Fuente/versión, dependencias y criterio de fallback a mock |
-| ¿Cómo identificar archivo, generación y ocurrencia? | Contrato CT-01 y contraejemplos de rotación/replay/repetición |
-| ¿Cuándo avanzar checkpoint y confirmar mensajes? | ADR-0002 y escenarios CA-03/CA-04/CA-11 |
-| ¿Qué herramienta procesa e indexa? | Comparación breve por complejidad y soporte de garantías |
-| ¿Dónde conservar raw y cuarentena? | Persistencia, inspección y reproceso sin pérdida silenciosa |
-| ¿Qué índice recibe una reentrega tardía? | Identidad estable de destino durante la ventana de replay |
-| ¿Cuántos nodos y qué versiones? | Recursos disponibles y objetivos; no deducir alta disponibilidad |
-| ¿Cómo mantener pequeño el análisis? | Reglas y agrupación iniciales; interfaces CT-04 y CA-08/CA-09 |
+| Which real ACS component is feasible within the deadline? | Source/version, dependencies, and criterion for fallback to a mock |
+| How are file, generation, and occurrence identified? | CT-01 and counterexamples involving rotation/replay/repetition |
+| When do checkpoints advance and messages get acknowledged? | ADR-0002 and CA-03/CA-04/CA-11 |
+| Which tool processes and indexes events? | Brief comparison of complexity and support for guarantees |
+| Where are raw records and quarantine retained? | Persistence, inspection, and replay without silent loss |
+| Which index receives a late redelivery? | Stable destination identity throughout the replay window |
+| How many nodes and which versions? | Available resources and goals; do not infer high availability |
+| How can analysis stay small? | Initial rules and grouping; CT-04 and CA-08/CA-09 |
 
-## Relación con la referencia histórica
+## Relationship to the historical reference
 
-La inspiración se limita a separación de fuentes, centralización y desacoplamiento mediante mensajería. La adaptación a OpenSearch, los contratos de identidad y las garantías de esta demo son decisiones propias. La correspondencia documental está en [referencias](../references/README.md).
+Inspiration is limited to source separation, centralization, and decoupling through messaging. The adaptation to OpenSearch, identity contracts, and this demo's guarantees are project-specific decisions. The documentary mapping is in [references](../references/README.md).

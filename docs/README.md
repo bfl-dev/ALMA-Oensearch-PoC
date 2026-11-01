@@ -1,31 +1,33 @@
-# Índice de documentación
+# Documentation index
 
-Estado al 1 de noviembre de 2026: **borrador para revisión de alcance**. La implementación no está autorizada.
+Status as of 1 November 2026: **draft for scope review**. Implementation is not authorized.
 
-## Ruta de lectura
+## Reading order
 
-1. [Definición del proyecto](project-definition.md): propósito, decisiones recibidas, demo esencial, extensiones y revisión pendiente.
-2. [Requisitos](requirements.md): comportamiento esperado y criterios de aceptación propuestos.
-3. [Arquitectura](architecture/README.md): vistas C4 conceptuales y preguntas que requieren evaluación.
-4. [ADR](adr/README.md): decisiones recibidas y propuestas con sus consecuencias.
-5. [Contratos](contracts/README.md): límites, identidad, errores y garantías por especificar.
-6. [Validación](validation.md): escenarios, oráculo de conteo y evidencia de demostración.
-7. [Planificación](planning/README.md): hitos, dependencias y preparación de issues/tareas para agentes.
-8. [Referencias](references/README.md): fuentes leídas, alcance de la evidencia y referencias pendientes.
-9. [Flujo de trabajo](development-workflow.md): estándar de branches, títulos de PR y revisión.
+1. [Project definition](project-definition.md): purpose, owner decisions, essential demo, extensions, and pending review.
+2. [Requirements](requirements.md): expected behavior and proposed acceptance criteria.
+3. [Architecture](architecture/README.md): conceptual C4 views and questions requiring evaluation.
+4. [ADRs](adr/README.md): owner decisions and proposals with their consequences.
+5. [Contracts](contracts/README.md): boundaries, identity, errors, and guarantees to specify.
+6. [Validation](validation.md): scenarios, counting oracle, and demonstration evidence.
+7. [Planning](planning/README.md): milestones, dependencies, and issue/agent-task preparation.
+8. [References](references/README.md): sources reviewed, evidence boundaries, and pending references.
+9. [Development workflow](development-workflow.md): branch naming, PR titles, and review conventions.
 
-## Convenciones
+## Conventions
 
-| Estado | Significado |
+English is the working language for documentation, diagrams, templates, issues, PR titles and descriptions, and commit messages. Existing identifiers are retained to preserve traceability across the language change.
+
+| Status | Meaning |
 | --- | --- |
-| Decisión recibida | Elección explícita del propietario; no implica implementación |
-| Propuesto | Recomendación pendiente de revisión |
-| Aprobado | Aceptado explícitamente por el propietario, con registro de fecha y alcance |
-| Verificado | Respaldado por lectura de fuente o evidencia reproducible identificada |
-| Pendiente | No definido, no obtenido o no ejecutado |
+| Owner decision | Explicit choice by the owner; does not imply implementation |
+| Proposed | Recommendation awaiting review |
+| Approved | Explicitly accepted by the owner, with date and scope recorded |
+| Verified | Supported by a reviewed source or identified reproducible evidence |
+| Pending | Not defined, obtained, or executed |
 
-Identificadores: `D-xx` decisiones recibidas, `RF-xx` requisitos funcionales, `RC-xx` requisitos de calidad, `CA-xx` escenarios de aceptación, `CT-xx` contratos y `ADR-xxxx` decisiones de arquitectura. Un criterio escrito no es una prueba ejecutada.
+Identifiers: `D-xx` owner decisions, `RF-xx` functional requirements, `RC-xx` quality requirements, `CA-xx` acceptance scenarios, `CT-xx` contracts, and `ADR-xxxx` architecture decisions. A written criterion is not an executed test.
 
-## Cierre de la definición
+## Definition gate
 
-Antes de implementar deben acordarse el alcance esencial, las garantías de recuperación, los contratos mínimos y los criterios de demo. El [registro de revisión](project-definition.md#registro-de-revisión) identifica lo pendiente. Las plantillas de [issue](../.github/ISSUE_TEMPLATE/task.md) y [PR](../.github/pull_request_template.md) facilitan la trazabilidad posterior.
+Before implementation, agree on the essential scope, recovery guarantees, minimum contracts, and demo criteria. The [review record](project-definition.md#review-record) identifies pending items. The [issue](../.github/ISSUE_TEMPLATE/task.md) and [PR](../.github/pull_request_template.md) templates support subsequent traceability.

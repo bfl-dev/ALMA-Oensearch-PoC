@@ -1,80 +1,80 @@
-# Requisitos y criterios de aceptación
+# Requirements and acceptance criteria
 
-**Estado:** borrador. Derivan de las decisiones recibidas y de la demo propuesta; todavía no constituyen una baseline aprobada ni resultados verificados.
+**Status:** draft. These requirements derive from owner decisions and the proposed demo; they are not yet an approved baseline or verified results.
 
-## Requisitos funcionales
+## Functional requirements
 
-| ID | Requisito | Decisión | Aceptación |
+| ID | Requirement | Decision | Acceptance |
 | --- | --- | --- | --- |
-| RF-01 | Ingerir XML de ACS real o mock documentado, preservando contenido original y procedencia | D-03 | CA-01 |
-| RF-02 | Ingerir logs OFFLINE de una aplicación/API simulada | D-03 | CA-01 |
-| RF-03 | Mantener ingesta continua y replay histórico mediante RabbitMQ persistente | D-04, D-05 | CA-02, CA-04 |
-| RF-04 | Normalizar sin perder la distinción entre tiempo del evento y tiempo de procesamiento | D-05, D-08 | CA-01, CA-07 |
-| RF-05 | Buscar y visualizar por rango temporal, origen, severidad, componente y texto | D-08 | CA-06 |
-| RF-06 | Reconstruir un incidente con contexto y referencias a eventos originales | D-08 | CA-07 |
-| RF-07 | Producir correlaciones automáticas con regla, versión, evidencia y explicación | D-08 | CA-08 |
-| RF-08 | Descubrir patrones de mensajes mediante agrupación, frecuencias y ejemplos | D-08 | CA-09 |
-| RF-09 | Investigar documentalmente la migración Elasticsearch → OpenSearch sin ejecutarla | D-01 | CA-10 |
+| RF-01 | Ingest XML from real ACS or a documented mock, preserving original content and provenance | D-03 | CA-01 |
+| RF-02 | Ingest OFFLINE logs from a simulated application/API | D-03 | CA-01 |
+| RF-03 | Support continuous ingestion and historical replay through persistent RabbitMQ messaging | D-04, D-05 | CA-02, CA-04 |
+| RF-04 | Normalize events while preserving the distinction between event time and processing time | D-05, D-08 | CA-01, CA-07 |
+| RF-05 | Search and visualize by time range, source, severity, component, and text | D-08 | CA-06 |
+| RF-06 | Reconstruct an incident with context and references to original events | D-08 | CA-07 |
+| RF-07 | Produce automatic correlations with a rule, version, evidence, and explanation | D-08 | CA-08 |
+| RF-08 | Discover message patterns through grouping, frequencies, and examples | D-08 | CA-09 |
+| RF-09 | Research Elasticsearch → OpenSearch migration through documentation without executing it | D-01 | CA-10 |
 
-## Requisitos de calidad
+## Quality requirements
 
-| ID | Requisito | Decisión | Aceptación |
+| ID | Requirement | Decision | Acceptance |
 | --- | --- | --- | --- |
-| RC-01 | Recuperar el procesamiento tras fallos abruptos dentro del modelo de fallos acordado | D-06 | CA-03, CA-04 |
-| RC-02 | Conservar backlog durante indisponibilidad temporal de OpenSearch y drenarlo al volver | D-06 | CA-04 |
-| RC-03 | No crear duplicados por reentrega, reintento o replay del mismo evento | D-07 | CA-02, CA-03, CA-05 |
-| RC-04 | Conservar dos ocurrencias legítimas aunque su XML, mensaje y timestamp coincidan | D-07 | CA-05 |
-| RC-05 | Aislar entradas inválidas y errores permanentes de indexación sin pérdida silenciosa ni bloqueo indefinido de válidos | D-06 | CA-11 |
-| RC-06 | Hacer reproducible y medible la demo en un entorno local documentado | Objetivo de entrega | CA-12 |
+| RC-01 | Recover processing after abrupt failures within the agreed failure model | D-06 | CA-03, CA-04 |
+| RC-02 | Preserve backlog during temporary OpenSearch unavailability and drain it after recovery | D-06 | CA-04 |
+| RC-03 | Avoid duplicates caused by redelivery, retry, or replay of the same event | D-07 | CA-02, CA-03, CA-05 |
+| RC-04 | Preserve two legitimate occurrences even when their XML, message, and timestamp match | D-07 | CA-05 |
+| RC-05 | Isolate invalid inputs and permanent indexing errors without silent loss or indefinite blocking of valid events | D-06 | CA-11 |
+| RC-06 | Make the demo reproducible and measurable in a documented local environment | Delivery goal | CA-12 |
 
-## Escenarios de aceptación propuestos
+## Proposed acceptance scenarios
 
-### CA-01 — Dos fuentes y normalización
+### CA-01 — Two sources and normalization
 
-Dado un corpus con manifiesto de identidades esperadas para ONLINE y OFFLINE, cuando se procesa, cada evento válido conserva origen, identidad, tiempo original, tiempo de ingesta, severidad, componente, mensaje y referencia al contenido original. La consulta recupera las identidades esperadas de ambas fuentes. La ausencia de un campo opcional se representa explícitamente; no se inventan valores ACS.
+Given a corpus with a manifest of expected ONLINE and OFFLINE identities, when it is processed, each valid event retains its source, identity, original time, ingestion time, severity, component, message, and reference to original content. Queries retrieve the expected identities from both sources. Missing optional fields are represented explicitly; ACS values are not invented.
 
-### CA-02 — Replay con solapamiento
+### CA-02 — Replay with overlap
 
-Dado un archivo identificado de forma estable que participa en ingesta continua, cuando se relee dos veces incluyendo registros ya publicados, el conjunto y la cantidad de eventos finales son los esperados. Cambiar la ruta del mismo archivo preservando su identidad de archivo no crea nuevas ocurrencias. La política de retención/índice de destino debe permitir esta propiedad durante la ventana soportada.
+Given a file with stable identity participating in continuous ingestion, when it is reread twice including previously published records, the final event set and count match expectations. Changing the path of the same file while preserving its file identity does not create new occurrences. The retention/target-index policy must support this property throughout the supported window.
 
-### CA-03 — Fallos en límites de confirmación
+### CA-03 — Failures at confirmation boundaries
 
-Cuando se termina abruptamente un adaptador antes y después de recibir confirmación del broker, el checkpoint no causa pérdidas al reiniciar. Cuando el consumidor cae antes de indexar o después de indexar y antes de confirmar el mensaje, el reinicio converge al mismo conjunto esperado. Incluir una respuesta de indexación perdida para simular resultado incierto. Si el destino se confirma antes de persistir durablemente el evento, el escenario falla.
+When an adapter is terminated abruptly before and after receiving broker confirmation, its checkpoint does not cause loss after restart. When the consumer fails before indexing, or after indexing but before acknowledging the message, restart converges to the same expected set. Include a lost indexing response to simulate an uncertain outcome. If the destination is acknowledged before the event is durably persisted, the scenario fails.
 
-### CA-04 — OpenSearch temporalmente fuera de servicio y broker reiniciado
+### CA-04 — Temporary OpenSearch outage and broker restart
 
-Durante la interrupción acordada, el backlog se conserva y los procesos siguen una política acotada de espera/reintento. Tras restaurar OpenSearch, todos los eventos válidos aceptados aparecen una vez y el backlog se drena dentro del umbral acordado. En un escenario separado, reiniciar RabbitMQ con mensajes pendientes y volúmenes conservados produce el mismo resultado. La evidencia identifica qué eventos habían sido aceptados durablemente.
+During the agreed outage, backlog is preserved and processes follow a bounded waiting/retry policy. After OpenSearch is restored, every accepted valid event appears once and backlog drains within the agreed threshold. In a separate scenario, restarting RabbitMQ with pending messages and retained volumes produces the same result. Evidence identifies which events had been durably accepted.
 
-### CA-05 — Repetición legítima frente a duplicación técnica
+### CA-05 — Legitimate repetition versus technical duplication
 
-Dadas dos ocurrencias ACS distintas con XML y timestamp idénticos, cuando cada una se entrega varias veces y luego se reprocesa el archivo, quedan exactamente dos eventos. Una misma ocurrencia mantiene su identidad entre ejecución continua, reinicio y replay. El oráculo utiliza coordenadas/manifiesto de origen, no el hash del cuerpo como equivalencia de ocurrencias.
+Given two distinct ACS occurrences with identical XML and timestamps, when each is delivered several times and the file is subsequently reprocessed, exactly two events remain. The same occurrence retains its identity across continuous execution, restart, and replay. The oracle uses source coordinates/a manifest, not a body hash as occurrence equivalence.
 
-### CA-06 — Búsqueda y visualización
+### CA-06 — Search and visualization
 
-El revisor ejecuta consultas documentadas por tiempo, origen, severidad, componente y texto, encuentra un evento conocido y observa al menos una visualización temporal y una distribución por origen/severidad. Se conservan consultas y evidencia exportable; una captura aislada no prueba conteos.
+The reviewer runs documented queries by time, source, severity, component, and text, finds a known event, and observes at least one time-based visualization and one distribution by source/severity. Queries and exportable evidence are retained; a screenshot alone does not prove counts.
 
-### CA-07 — Reconstrucción de incidente
+### CA-07 — Incident reconstruction
 
-Dado un incidente sintético con cronología conocida y eventos tardíos, la investigación recupera su contexto, ordena por tiempo del evento con desempate documentado y distingue observaciones de hipótesis. Las referencias permiten volver a los logs originales. No se interpreta proximidad temporal como causalidad probada.
+Given a synthetic incident with a known timeline and late events, the investigation retrieves its context, orders events by event time with a documented tie-breaker, and distinguishes observations from hypotheses. References allow inspection of original logs. Temporal proximity is not treated as proven causality.
 
-### CA-08 — Correlación explicable
+### CA-08 — Explainable correlation
 
-Una regla versionada vincula los eventos esperados y devuelve sus identidades, condiciones cumplidas y explicación legible. Un caso negativo con eventos cercanos pero de otra operación no se vincula. Si faltan identificadores ACS, la salida señala la inferencia y sus límites. La demostración declara cualquier relación artificial entre fuentes.
+A versioned rule links the expected events and returns their identities, satisfied conditions, and a readable explanation. A negative case with nearby events from another operation is not linked. If ACS identifiers are missing, the output identifies the inference and its limits. The demonstration discloses any artificial relationship between sources.
 
-### CA-09 — Descubrimiento de patrones
+### CA-09 — Pattern discovery
 
-Un corpus incluye mensajes de la misma familia con parámetros variables y otro mensaje distinto. El análisis devuelve grupos, plantilla o criterio de agrupación, frecuencias y ejemplos; detecta la familia repetida sin fusionar ni borrar sus eventos. Se documentan normalización y límites. No requiere entrenar un modelo.
+A corpus includes messages from the same family with variable parameters and another distinct message. Analysis returns groups, a template or grouping criterion, frequencies, and examples; it detects the recurring family without merging or deleting its events. Normalization and limitations are documented. Model training is not required.
 
-### CA-10 — Investigación de migración
+### CA-10 — Migration research
 
-Un informe identifica versiones consideradas, APIs/clientes, mappings, consultas, visualizaciones, seguridad/plugins, transferencia de datos y riesgos relevantes. Cada conclusión distingue documentación consultada, supuesto y validación pendiente. No afirma haber migrado ni presume una versión actual de Elasticsearch en ALMA.
+A report identifies the versions considered, APIs/clients, mappings, queries, visualizations, security/plugins, data transfer, and relevant risks. Each conclusion distinguishes reviewed documentation, assumptions, and pending validation. It does not claim an executed migration or assume ALMA's current Elasticsearch version.
 
-### CA-11 — Registros inválidos y fallos parciales
+### CA-11 — Invalid records and partial failures
 
-Un lote mezcla registros válidos, XML inválido y un rechazo permanente de indexación. Los válidos terminan indexados; los inválidos quedan en almacenamiento de cuarentena inspeccionable con origen, motivo e identidad/referencia para corregir y reprocesar. La confirmación solo permite retirar el mensaje original después de una disposición durable. Evaluar los resultados de cada elemento, incluyendo un lote con éxito parcial.
+A batch mixes valid records, invalid XML, and a permanent indexing rejection. Valid events are eventually indexed; invalid inputs remain in inspectable quarantine storage with source, reason, and identity/reference for correction and replay. Acknowledgment allows removal of the original message only after a durable disposition. Evaluate results for each item, including a partially successful batch.
 
-### CA-12 — Demo reproducible y evidencia honesta
+### CA-12 — Reproducible demo and honest evidence
 
-Un revisor sigue instrucciones desde un entorno limpio con prerrequisitos declarados y obtiene los resultados acordados. El informe registra commit, versiones, hardware, configuración, corpus, conteos, tiempos y limitaciones. Todo criterio no ejecutado se marca como pendiente; no hay afirmaciones de alta disponibilidad o escala operacional sin evidencia.
+A reviewer follows instructions from a clean environment with declared prerequisites and obtains the agreed results. The report records the commit, versions, hardware, configuration, corpus, counts, timings, and limitations. Any unexecuted criterion is marked pending; no high-availability or operational-scale claims are made without evidence.
 
-Los parámetros de carga, tiempos y retención se proponen en el [plan de validación](validation.md); deben aprobarse y fijarse antes de ejecutar las pruebas.
+Load, timing, and retention parameters are proposed in the [validation plan](validation.md); they must be approved and fixed before tests are executed.
