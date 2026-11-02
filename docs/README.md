@@ -1,10 +1,10 @@
 # Documentation index
 
-Status as of 1 November 2026: **draft for scope review**. Implementation is not authorized.
+Status as of 1 November 2026: **project definition approved; architecture and contracts next**. Detailed design and quantitative acceptance remain pending; implementation has not started.
 
 ## Reading order
 
-1. [Project definition](project-definition.md): purpose, owner decisions, essential demo, extensions, and pending review.
+1. [Project definition](project-definition.md): purpose, owner decisions, approved essential scope, extensions, and the approval record.
 2. [Requirements](requirements.md): expected behavior and proposed acceptance criteria.
 3. [Architecture](architecture/README.md): conceptual C4 views and questions requiring evaluation.
 4. [ADRs](adr/README.md): owner decisions and proposals with their consequences.
@@ -30,4 +30,4 @@ Identifiers: `D-xx` owner decisions, `RF-xx` functional requirements, `RC-xx` qu
 
 ## Definition gate
 
-Before implementation, agree on the essential scope, recovery guarantees, minimum contracts, and demo criteria. The [review record](project-definition.md#review-record) identifies pending items. The [issue](../.github/ISSUE_TEMPLATE/task.md) and [PR](../.github/pull_request_template.md) templates support subsequent traceability.
+The essential scope and guarantee boundaries are approved; see the [approval record](project-definition.md#approval-record). Before implementation, finalize the architectural decisions, minimum contracts, and detailed demo criteria. The [review record](project-definition.md#review-record) identifies remaining items. The [issue](../.github/ISSUE_TEMPLATE/task.md) and [PR](../.github/pull_request_template.md) templates support subsequent traceability.

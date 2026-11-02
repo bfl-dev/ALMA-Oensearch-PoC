@@ -25,4 +25,4 @@ The PR title mapping is a proposed convention accompanying the branch standard; 
 
 Branch from `main` using the appropriate type, open a PR describing the outcome and validation, and link requirements/ADRs/contracts where applicable. The [template](../.github/pull_request_template.md) captures this information.
 
-This documentation PR uses `docs/project-definition`. Documentation review does not authorize implementation: scope approval and authorization must be recorded explicitly as described in [AGENTS.md](../AGENTS.md).
+This documentation PR uses `docs/project-definition`. Explicit project-definition approval is now recorded in the [approval record](project-definition.md#approval-record). Merging a documentation PR alone never implies implementation authorization; continue the agreed architecture, contracts, and planning sequence as described in [AGENTS.md](../AGENTS.md).

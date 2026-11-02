@@ -2,7 +2,7 @@
 
 ## Status and authorization
 
-The project is in the definition phase. The owner requested a scope review before implementation. Only documentation, research, and planning are currently authorized.
+The project definition was explicitly approved by the owner on 1 November 2026 (America/Santiago); see the approval record in `docs/project-definition.md`. Continue the agreed sequence with architecture/ADR evaluation, contracts, and planning. The detailed design and quantitative targets remain open; no implementation has started.
 
 - Do not create application code, simulators, runnable infrastructure, containers, dependencies, CI, or software tests until the owner authorizes implementation of the reviewed scope.
 - Do not delegate execution to agents without the owner's authorization. Task documents are preparation, not execution instructions.

@@ -7,7 +7,7 @@ Documentary review: 1 November 2026. Distinguish owner instructions, reviewed so
 Gil, J. P.; Miranda, N.; Garcés, M.; Avarias, J. **Current Status of Software Log Analysis at ALMA Observatory**. Software and Cyberinfrastructure for Astronomy V, 2018. DOI: [10.1117/12.2314247](https://doi.org/10.1117/12.2314247).
 
 - Requested reference: `Current_Status_of_Software_Log_Analysis_at_ALMA_Observatory1.pdf`.
-- Status: the exact file was not found in the available resources. The public publication text [uploaded by one of its authors](https://www.researchgate.net/publication/326236739_Current_status_of_software_log_analysis_at_ALMA_Observatory) was reviewed. Binary identity with the requested PDF was not checked.
+- Status: the exact requested PDF is now available as a project attachment. Its relevant logging, storage, and ingestion passages were read directly. The public publication text [uploaded by one of its authors](https://www.researchgate.net/publication/326236739_Current_status_of_software_log_analysis_at_ALMA_Observatory) was reviewed earlier; binary identity between the two copies was not checked.
 - Scope: historical evidence from 2018; does not establish current infrastructure or procedures.
 
 Brief mapping to the project:
@@ -23,9 +23,9 @@ The paper was not copied into the repository. The project's MIT license does not
 ## S-02 — Internship description
 
 - Requested reference: `alma-internship.md`.
-- Status: **pending retrieval and review**. It is not in the initial repository and was not found under that name among the available files.
-- No file of the same name was created with inferred content. Statements from earlier conversations do not replace the original document.
-- Pending: posting source and date, role/team, exact content, and verifiable relationship to scope. Until then, no official ALMA requirements are attributed to this reference.
+- Status: **available as a project attachment and read directly**. The attached text identifies the Software Team / Front Line Software Support Engineers (FLSSE) internship.
+- The description covers analysis of existing Elasticsearch infrastructure, OpenSearch study and migration research, and a small OpenSearch cluster PoC evaluating deployment, ingestion, indexing, querying, monitoring, and integration. This supports the project's general direction; the owner-defined reliability and analysis requirements remain project choices.
+- The attachment is a supplied copy of the posting, not access to ALMA's operational environment. Detailed source/version verification and the migration assessment remain pending. No inferred replacement file was created.
 
 ## S-03 — RabbitMQ confirmations
 

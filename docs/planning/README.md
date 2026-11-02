@@ -1,6 +1,6 @@
 # Delivery plan and task preparation
 
-**Status:** documentation proposal. No implementation milestones/issues have been created and no agent execution has been assigned.
+**Status:** project definition approved on 1 November 2026 (America/Santiago); architecture and contracts are next. The milestone/backlog breakdown remains a proposal. No implementation milestones/issues have been created and no agent execution has been assigned.
 
 ## Proposed milestones
 
@@ -10,7 +10,7 @@
 | M1 — Essential demo | Two sources, recovery/replay, explainable analysis, and evidence on GitHub | Essential criteria executed; pending items and limitations visible | Before 3 November: target 2 November, America/Santiago |
 | M2 — Extensions | Improvements prioritized from M1 evidence | New scope approved | No committed date |
 
-M1 depends on closing M0 and authorizing implementation. Do not invent a completion date or skip verification to meet the deadline. If M1 does not fit, renegotiate scope with the owner or honestly publish an interim result.
+Scope approval is recorded in the [project definition](../project-definition.md#approval-record), completing DOC-01. M0 is not complete: detailed C4/ADR evaluation, contracts, and acceptance parameters remain open. M1 depends on closing M0 and authorizing implementation. Do not invent a completion date or skip verification to meet the deadline. If M1 does not fit, renegotiate scope with the owner or honestly publish an interim result.
 
 ## Candidate backlog
 
@@ -18,8 +18,8 @@ Convert these rows into issues when the definition is finalized. IDs are local i
 
 | Task | Reviewable outcome | Dependencies | Type |
 | --- | --- | --- | --- |
-| DOC-01 | Review essential scope and complete the approval record | Documentation PR | Owner review |
-| DOC-02 | Obtain `alma-internship.md` and cross-check the historical reference | None | Documentary research |
+| DOC-01 | Review essential scope and complete the approval record | Documentation PR | Complete: explicit owner scope approval recorded |
+| DOC-02 | Review the attached internship description and historical reference | None | Initial source review complete; detailed research remains in DOC-06 |
 | DOC-03 | Evaluate real ACS and document feasibility/fallback | DOC-01 | Research; no development before authorization |
 | DOC-04 | Finalize C4, ADR-0002, tooling, and topology | DOC-01, DOC-02, DOC-03 | Design |
 | DOC-05 | Finalize contracts and acceptance parameters | DOC-04 | Design |

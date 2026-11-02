@@ -2,7 +2,7 @@
 
 Personal project to demonstrate reliable log ingestion and incident investigation with OpenSearch, in preparation for an ALMA 2027 internship application.
 
-**Status: project definition under review. No application code or runnable demo exists yet.**
+**Status: project definition approved; architecture and contracts are next. No application code or runnable demo exists yet.**
 
 This is an independent learning project. Its architectural inspiration is a historical ALMA publication; it does not describe or claim access to ALMA's current infrastructure.
 
@@ -14,7 +14,7 @@ This is an independent learning project. Its architectural inspiration is a hist
 - Search and visualize logs, reconstruct an incident, explain automatic correlations, and discover recurring message patterns.
 - Document Elasticsearch-to-OpenSearch migration considerations without performing a migration.
 
-These are project goals, **not implemented capabilities**. The demo scope and acceptance targets await owner review.
+These are project goals, **not implemented capabilities**. The essential demo scope is approved; detailed architecture, contracts, and quantitative acceptance targets remain to be finalized.
 
 ## Documentation
 
@@ -29,7 +29,7 @@ Start at the [documentation index](docs/README.md), then review the [project sco
 | Component boundaries and event identity | [Contracts](docs/contracts/README.md) |
 | Failure tests and demo evidence | [Validation plan](docs/validation.md) |
 | Milestones, dependencies and agent tasks | [Delivery plan](docs/planning/README.md) |
-| Historical paper and pending internship reference | [References](docs/references/README.md) |
+| Historical paper and internship reference | [References](docs/references/README.md) |
 
 English is the working language for documentation, diagrams, templates, issues, pull requests, and commit messages. The repository URL retains its original spelling, `ALMA-Oensearch-PoC`.
 
@@ -37,7 +37,7 @@ English is the working language for documentation, diagrams, templates, issues, 
 
 Target: a presentable GitHub demonstration **before 3 November 2026**, interpreted as completion by 2 November in `America/Santiago`. This is a planning target, not a delivery guarantee.
 
-Next: review the scope with the project owner, resolve the missing reference and approve the essential demo. Implementation and agent execution remain pending that review. See [agent guidance](AGENTS.md).
+The owner approved the project definition on 1 November 2026 (America/Santiago). Next: evaluate the C4 views and ADRs, finalize component contracts and acceptance parameters, and organize implementation work. See the [approval record](docs/project-definition.md#approval-record) and [agent guidance](AGENTS.md).
 
 ## License
 
