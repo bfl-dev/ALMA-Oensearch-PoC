@@ -1,14 +1,14 @@
 # Documentation index
 
-Status as of 3 November 2026: **scope and conceptual C4 approved; technical-design proposals ready for review**. DOC-03 documentary research is complete. Contract/ADR proposals and quantitative acceptance remain pending approval; implementation has not started.
+Status as of 3 November 2026: **technical design accepted; initial implementation under review; live acceptance pending**. Start with the [runbook](running.md) and [evidence record](evidence/implementation.md).
 
 ## Reading order
 
 1. [Project definition](project-definition.md): purpose, owner decisions, approved essential scope, extensions, and the approval record.
-2. [Requirements](requirements.md): expected behavior and proposed acceptance criteria.
+2. [Requirements](requirements.md): expected behavior and accepted acceptance criteria.
 3. [ACS feasibility](research/acs-feasibility.md), then [architecture](architecture/README.md): research outcome, approved logical layout, and proposed detailed answers.
 4. [ADRs](adr/README.md): owner decisions and proposals with their consequences.
-5. [Contracts](contracts/README.md): proposed CT-01 through CT-04, envelope schema, and synthetic valid/invalid examples.
+5. [Contracts](contracts/README.md): accepted CT-01 through CT-04, envelope schema, and synthetic valid/invalid examples.
 6. [Validation](validation.md): scenarios, counting oracle, and demonstration evidence.
 7. [Planning](planning/README.md) and [task specifications](planning/implementation-tasks.md): milestones, dependencies, and proposed issue-ready work.
 8. [References](references/README.md): sources reviewed, evidence boundaries, and pending references.
@@ -30,4 +30,4 @@ Identifiers: `D-xx` owner decisions, `RF-xx` functional requirements, `RC-xx` qu
 
 ## Definition gate
 
-The essential scope and guarantee boundaries are approved; see the [approval record](project-definition.md#approval-record). Before implementation, finalize the architectural decisions, minimum contracts, and detailed demo criteria. The [review record](project-definition.md#review-record) identifies remaining items. The [issue](../.github/ISSUE_TEMPLATE/task.md) and [PR](../.github/pull_request_template.md) templates support subsequent traceability.
+M0 is accepted at revision `d5d82cf`; owner explicitly authorized implementation. See the [acceptance record](project-definition.md#technical-design-acceptance-and-implementation-authorization). Runtime M1 acceptance is separate and remains pending. [Planning](planning/README.md) links the implementation work; [migration research](research/elasticsearch-migration.md) is documentary only.

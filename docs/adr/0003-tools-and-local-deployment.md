@@ -1,6 +1,6 @@
 # ADR-0003 — Python processing and a bounded Compose deployment
 
-- Status: **proposed for technical-design review**
+- Status: **accepted by owner on 3 November 2026; runtime verification pending**
 - Date: 3 November 2026
 - Traceability: RF-01 through RF-08; RC-01 through RC-06; CT-01 through CT-04
 - Already accepted by owner: OpenSearch, RabbitMQ, Compose, temporary host, two-hour ACS research ceiling
@@ -17,13 +17,13 @@ The PoC needs explicit occurrence identity, durable progress, per-item indexing 
 
 [RabbitMQ input](https://www.elastic.co/docs/reference/logstash/plugins/plugins-inputs-rabbitmq) and [Logstash PQ](https://www.elastic.co/docs/reference/logstash/persistent-queues) documentation describe configurable durability, not proof of this full contract. The Python recommendation is about bounded scope and inspectability, not a claim that Logstash cannot be reliable.
 
-## Proposed decision
+## Accepted decision
 
 Use one Python codebase with capture/adapter, worker, and on-demand analysis entry points. These roles are not separate microservice projects. Use the documented mock immediately while no reviewed real corpus exists. Prefer a sanitized, release-identified XML export when available under the CT-01 admission gate; see [DOC-03](../research/acs-feasibility.md). A future authorized main-PC capture experiment should try a Python ACS logger plus logging client before LogsXmlStore. ACS is not an additional mandatory service in the temporary Compose stack.
 
 Use separate SQLite databases for adapter checkpoints and worker quarantine on local persistent volumes, explicit transactions, `synchronous=FULL`, and one writer per role. Record effective settings and actual SQLite version. Retain source records independently. SQLite quarantine provides a uniqueness constraint and inspectable idempotent retention without another RabbitMQ publish/confirm boundary. A broker quarantine is an alternative, not a required service.
 
-## Proposed version baseline
+## Accepted version baseline; runtime unverified
 
 | Component | Version | Documentary evidence |
 | --- | --- | --- |
@@ -38,7 +38,7 @@ Use separate SQLite databases for adapter checkpoints and worker quarantine on l
 
 These are candidate pins, not installed/integration-tested dependencies. Before setup resolve available Linux/amd64 image tags, immutable digests, transitive locks, full footprint, and compatibility smoke checks. Do not use floating `latest` or silently substitute versions. Registry image availability/digests for these proposed stack components were not verified here. DOC-03 separately records browser-verified ACS candidate metadata; it does not establish stack compatibility or installed size.
 
-## Proposed deployment and budget
+## Accepted initial deployment and budget
 
 One OpenSearch node, one Dashboards instance, one RabbitMQ, and adapter/worker roles; analysis reuses the project image on demand. One concrete events index, one primary shard, zero replicas. One durable classic queue. Neither storage choice demonstrates replication/high availability.
 
@@ -57,4 +57,4 @@ Bind UI/API ports to loopback and use a private Compose network. Keep test secre
 
 Inspect host memory/free space, `vm.max_map_count`, and runtime prerequisites using [official Docker guidance](https://docs.opensearch.org/latest/install-and-configure/install-opensearch/docker/). Record needed host changes; do not change machine settings during this documentation stage.
 
-The main PC changes allocations and measurements, not identities/contracts. Preserve manifests/IDs and rerun resource preflight. Proposed source mode, processing, storage, pins, and allocations need review; accepted Compose/C4 decisions do not imply their approval. No runtime configuration is introduced.
+The main PC changes allocations and measurements, not identities/contracts. Preserve manifests/IDs and rerun resource preflight. Source mode, tools, pins and initial allocations were accepted at revision `d5d82cf`. The implementation now introduces Compose and preflight configuration; actual fit/compatibility remain unverified. See the [runbook](../running.md).

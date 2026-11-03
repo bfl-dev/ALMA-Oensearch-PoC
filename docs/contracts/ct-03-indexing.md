@@ -1,6 +1,6 @@
 # CT-03 — Processing, indexing, and quarantine
 
-**Status:** proposed for review. RF-04, RC-01 through RC-05; CA-01 through CA-05 and CA-11. Depends on CT-01/CT-02 and ADR-0002/0003.
+**Status:** accepted by owner on 3 November 2026; runtime evidence tracked separately. RF-04, RC-01 through RC-05; CA-01 through CA-05 and CA-11. Depends on CT-01/CT-02 and ADR-0002/0003.
 
 ## Deterministic normalized document
 

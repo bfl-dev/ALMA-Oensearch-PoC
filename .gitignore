@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.coverage
+.env
+.env.images
+.cache/
+data/
+artifacts/
+requirements.lock
+deployment/image-lock.json

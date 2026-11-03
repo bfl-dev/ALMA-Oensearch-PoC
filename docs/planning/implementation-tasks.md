@@ -1,6 +1,6 @@
 # Implementation task specifications
 
-**Status:** proposed, issue-ready task descriptions; no execution assigned. All runtime tasks remain blocked on technical-design/acceptance review and explicit implementation authorization. Branches follow the accepted type convention. Each task must cite the approved design commit before work starts.
+**Status:** authorized against accepted design `d5d82cf`; initial implementation grouped on `feature/essential-demo`. Task-specific branch names below remain suggestions for future independent work. Live acceptance is pending. See the [delivery tracker](README.md).
 
 ## Dependency order
 

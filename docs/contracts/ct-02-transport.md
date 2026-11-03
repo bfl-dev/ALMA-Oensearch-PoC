@@ -1,6 +1,6 @@
 # CT-02 — Adapter to RabbitMQ
 
-**Status:** proposed for review. RF-03, RC-01/RC-02, CA-03/CA-04; depends on CT-01 and ADR-0002.
+**Status:** accepted by owner on 3 November 2026; runtime evidence tracked separately. RF-03, RC-01/RC-02, CA-03/CA-04; depends on CT-01 and ADR-0002.
 
 ## Broker contract
 

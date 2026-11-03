@@ -2,21 +2,22 @@
 
 ## Status and authorization
 
-The project definition was explicitly approved by the owner on 1 November 2026 (America/Santiago); see the approval record in `docs/project-definition.md`. Continue the agreed sequence with architecture/ADR evaluation, contracts, and planning. The owner approved the conceptual C4 architecture on 3 November 2026 (America/Santiago); see `docs/architecture/README.md`. Detailed contracts, tooling, recovery mechanics, and quantitative targets are proposed on branch `docs/technical-design` for review; no implementation has started. Docker Compose is accepted, and the current host is temporary. The owner authorized DOC-03 research and preparation of the technical-design PR, not runtime implementation.
+The owner explicitly accepted the technical design at revision `d5d82cf5b6490efbeebf691e8ec9630407c05e5f` and authorized implementation on 3 November 2026 (America/Santiago): "accepted, now proceed with the implementation". PR #2 is merged. ADR-0002/0003, CT-01 through CT-04, and their acceptance parameters form the accepted implementation baseline.
 
-- Do not create application code, simulators, runnable infrastructure, containers, dependencies, CI, or software tests until the owner authorizes implementation of the reviewed scope.
-- Do not delegate execution to agents without the owner's authorization. Task documents are preparation, not execution instructions.
-- Record scope approval in `docs/project-definition.md` when an explicit instruction is given. The existence or merge of a documentation PR is not sufficient to infer approval.
-- If a later instruction from the owner authorizes work, that instruction takes precedence; update the documentation status accordingly.
+- Implement the essential demo and meaningful tests; record actual evidence and remaining runtime blockers.
+- Preserve the real-export admission gate and use synthetic sources until a vetted corpus is available.
+- The host is temporary: 16 GB total RAM, 10 GB project storage allowance; Docker Compose is accepted. Do not delete unrelated data or disable disk safety thresholds to meet this budget.
+- Do not delegate to agents without explicit authorization. Current authorization is for implementation, not agent delegation.
+- The authorization supersedes earlier documentation-only restrictions. Merging implementation PRs still requires review; do not claim runtime acceptance from unit tests or configuration validation.
 
 ## Documentation and delivery
 
 - Use English for repository documentation, diagrams, templates, issues, PR titles and descriptions, and commit messages. Preserve proper names, source filenames, and established identifiers.
 - Name branches `<type>/<kebab-case-description>` according to the change: `feature/`, `docs/`, `fix/`, `refactor/`, `test/`, `chore/`, `ci/`, or `build/`. See `docs/development-workflow.md` for the corresponding PR title types.
-- Use `docs/technical-design` for the current research/contracts PR and `docs: <outcome>` for its title. Future branches follow their actual change type.
+- Current implementation branch: `feature/essential-demo`; use a `feat:` PR title. Future branches follow their actual change type.
 - Distinguish owner decisions, proposals, and verified evidence.
-- Contract schemas and synthetic static examples under `docs/contracts/` are design artifacts. They do not authorize application code, a simulator, runnable infrastructure, or software tests.
-- Read CT-01 through CT-04 and ADR-0002/0003 before preparing implementation work; do not invent an interface or assume proposed pins were integration-tested.
+- Keep contract changes traceable; do not silently weaken accepted failure or identity guarantees.
+- Read CT-01 through CT-04 and ADR-0002/0003 before implementation; do not invent an interface or assume documentary pins were integration-tested.
 - Link requirements, ADRs, contracts, and evidence through their identifiers.
 - Do not describe goals or pending tests as achieved results.
 - Do not present the 2018 paper as evidence of ALMA's current infrastructure.

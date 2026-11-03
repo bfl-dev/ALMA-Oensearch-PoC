@@ -1,0 +1,10 @@
+[
+  {"name":"all-events","body":{"size":0,"query":{"match_all":{}}}},
+  {"name":"online-source","body":{"size":10,"query":{"term":{"source.family":"ONLINE"}},"sort":[{"event_time.utc":"asc"},{"event_id":"asc"}]}},
+  {"name":"errors","body":{"size":10,"query":{"term":{"severity":"ERROR"}}}},
+  {"name":"timeout-text","body":{"size":10,"query":{"match":{"message":"timeout"}}}},
+  {"name":"known-component","body":{"size":10,"query":{"term":{"component":"mock.receiver"}}}},
+  {"name":"incident-time-window","body":{"size":100,"query":{"range":{"event_time.utc":{"gte":"2026-11-02T23:59:58.000Z","lte":"2026-11-03T00:00:10.000Z"}}},"sort":[{"event_time.utc":"asc"},{"event_id":"asc"}]}},
+  {"name":"source-severity-distribution","body":{"size":0,"aggs":{"sources":{"terms":{"field":"source.family"},"aggs":{"severity":{"terms":{"field":"severity"}}}}}}},
+  {"name":"event-time-histogram","body":{"size":0,"aggs":{"event_time":{"date_histogram":{"field":"event_time.utc","fixed_interval":"10s"}}}}}
+]
