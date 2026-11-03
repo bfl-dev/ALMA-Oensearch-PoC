@@ -1,6 +1,6 @@
 # Formal project definition
 
-**Status:** project definition approved on 1 November 2026 (America/Santiago). **Approval owner:** project owner. **Implementation:** not started; architecture, ADRs, contracts, and planning remain the next stages.
+**Status:** project definition approved on 1 November 2026 (America/Santiago). **Approval owner:** project owner. **Architecture:** conceptual C4 approved on 3 November 2026 (America/Santiago). **Implementation:** not started; detailed design, ADRs, contracts, and planning remain the next stages.
 
 ## Purpose
 
@@ -76,7 +76,8 @@ Proposal: document on 1 November, close decisions and contracts at the start of 
 | Guarantees | Process failures and restart with persisted data, excluding storage loss | Boundaries approved; exact acceptance/checkpoint contracts pending |
 | Quantitative acceptance | Tentative parameters in the validation plan | Pending detailed agreement |
 | Internship reference | Attached `alma-internship.md` is now available and has been read | Initial source review complete; detailed migration assessment pending |
-| Next stage | Evaluate architecture/ADRs, define contracts, then organize implementation work | Design and planning next; no implementation started |
+| Architecture | Conceptual C4 context and logical containers | Approved on 3 November 2026; detailed choices remain open |
+| Next stage | Resolve detailed architecture questions/ADRs, define contracts, then organize implementation work | Design and planning next; no implementation started |
 
 ### Approval record
 
@@ -86,3 +87,11 @@ Proposal: document on 1 November, close decisions and contracts at the start of 
 - Effect: the essential scope, extension boundaries, and guarantee boundaries are approved. Continue with the agreed design and planning sequence without reopening those scope choices.
 - Still open: exact topology/resources, ACS investigation limit/source, detailed recovery and identity design in ADR-0002, component contracts, and tentative quantitative acceptance targets. Scope approval does not mark these technical details approved or complete.
 - Execution status: this update records approval and source clarification only; it does not merge the PR, create runtime infrastructure, or execute implementation agents.
+
+### Architecture approval follow-up
+
+- Date: **3 November 2026, America/Santiago**.
+- Evidence: the owner's message: **"i approve the architecture, but need to explain me the questions to answer"**.
+- Baseline: conceptual C4 context and logical-container views in `docs/architecture/README.md` at revision `5e28f390edba5881269471d1cfd2e1401e56f322`.
+- Effect: approve the component responsibilities and logical connections. The remaining engineering questions are explained in the architecture document; their candidate answers are recommendations, not newly approved decisions.
+- Still open: ACS integration/time budget, detailed identity and recovery rules in ADR-0002, processing/storage tools, index policy, deployment versions/resources, contracts, and quantitative validation targets. This approval does not authorize implementation or merge PR #1.

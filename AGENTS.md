@@ -2,7 +2,7 @@
 
 ## Status and authorization
 
-The project definition was explicitly approved by the owner on 1 November 2026 (America/Santiago); see the approval record in `docs/project-definition.md`. Continue the agreed sequence with architecture/ADR evaluation, contracts, and planning. The detailed design and quantitative targets remain open; no implementation has started.
+The project definition was explicitly approved by the owner on 1 November 2026 (America/Santiago); see the approval record in `docs/project-definition.md`. Continue the agreed sequence with architecture/ADR evaluation, contracts, and planning. The owner approved the conceptual C4 architecture on 3 November 2026 (America/Santiago); see `docs/architecture/README.md`. Detailed contracts, deployment choices, recovery mechanics, and quantitative targets remain open; no implementation has started.
 
 - Do not create application code, simulators, runnable infrastructure, containers, dependencies, CI, or software tests until the owner authorizes implementation of the reviewed scope.
 - Do not delegate execution to agents without the owner's authorization. Task documents are preparation, not execution instructions.

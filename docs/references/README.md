@@ -1,6 +1,6 @@
 # References and evidence boundaries
 
-Documentary review: 1 November 2026. Distinguish owner instructions, reviewed sources, and pending documents.
+Initial documentary review: 1 November 2026. Reference inventory updated: 3 November 2026. Distinguish owner instructions, reviewed sources, and pending documents.
 
 ## S-01 — Historical ALMA publication
 
@@ -18,7 +18,7 @@ Brief mapping to the project:
 | 2.3 and 3.3 | OFFLINE web/API sources and Filebeat for centralization | Motivates representing two families; both use RabbitMQ here by project decision |
 | 4 and 5 | Exploration, process analysis, and analytical tools | Motivates incident investigation and explainable analysis; does not require reproducing their implementations |
 
-The paper was not copied into the repository. The project's MIT license does not extend to these publications.
+The owner added [the paper PDF](Current_Status_of_Software_Log_Analysis_at_ALMA_Observatory1-1.pdf) to this branch. Its presence was checked on 3 November 2026; this update did not re-extract the PDF or compare binary copies. The project's MIT license does not extend to third-party publications.
 
 ## S-02 — Internship description
 
@@ -38,6 +38,14 @@ Publisher confirms and consumer acknowledgments cover different stages. Used to 
 [Bulk API](https://docs.opensearch.org/latest/api-reference/document-apis/bulk/), official documentation, reviewed on 1 November 2026.
 
 Bulk operations are processed independently and results are reported per item. Used to require partial-error analysis. The `latest` link does not pin the project's version; that choice is pending.
+
+## S-05 — Supplied ACS documentation investigation
+
+- File: [documentation-investigation.md](documentation-investigation.md), added by the owner and read from repository revision `5e28f390edba5881269471d1cfd2e1401e56f322` on 3 November 2026.
+- Report date: 30 October 2026. It describes a review of 34 public ICTACS pages, distinguishing documented statements, historical/proposed designs, inferences, and unverified information.
+- Relevant leads: XML structure and time semantics; logging channels; `acsXmlFileStore` and optional AMQP/Kafka handlers; identity limitations; and open migration questions.
+- Evidence boundary: this is a supplied research report, not a schema, a runtime integration test, or proof of ALMA's current production architecture. Its underlying source links were not independently revalidated in this update. Confirm the target ACS release, schema/IDL, samples, and delivery semantics before finalizing CT-01.
+- The source report is retained in its original Spanish as supplied evidence. Project-authored decisions and summaries remain in English.
 
 ## Pending migration research
 
