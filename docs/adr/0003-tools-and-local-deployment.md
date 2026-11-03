@@ -19,7 +19,7 @@ The PoC needs explicit occurrence identity, durable progress, per-item indexing 
 
 ## Proposed decision
 
-Use one Python codebase with capture/adapter, worker, and on-demand analysis entry points. These roles are not separate microservice projects. Start with the documented mock, per [DOC-03](../research/acs-feasibility.md), preserving a file-export boundary for future real ACS.
+Use one Python codebase with capture/adapter, worker, and on-demand analysis entry points. These roles are not separate microservice projects. Use the documented mock immediately while no reviewed real corpus exists. Prefer a sanitized, release-identified XML export when available under the CT-01 admission gate; see [DOC-03](../research/acs-feasibility.md). A future authorized main-PC capture experiment should try a Python ACS logger plus logging client before LogsXmlStore. ACS is not an additional mandatory service in the temporary Compose stack.
 
 Use separate SQLite databases for adapter checkpoints and worker quarantine on local persistent volumes, explicit transactions, `synchronous=FULL`, and one writer per role. Record effective settings and actual SQLite version. Retain source records independently. SQLite quarantine provides a uniqueness constraint and inspectable idempotent retention without another RabbitMQ publish/confirm boundary. A broker quarantine is an alternative, not a required service.
 
@@ -36,7 +36,7 @@ Use separate SQLite databases for adapter checkpoints and worker quarantine on l
 | SQLite | Bundled with Python image | Record actual version/durability settings during setup |
 | Docker Engine / Compose | Compatible host versions | Record exact versions and storage location during IMP-01 |
 
-These are candidate pins, not installed/integration-tested dependencies. Before setup resolve available Linux/amd64 image tags, immutable digests, transitive locks, full footprint, and compatibility smoke checks. Do not use floating `latest` or silently substitute versions. Registry image availability/digests were not verified here.
+These are candidate pins, not installed/integration-tested dependencies. Before setup resolve available Linux/amd64 image tags, immutable digests, transitive locks, full footprint, and compatibility smoke checks. Do not use floating `latest` or silently substitute versions. Registry image availability/digests for these proposed stack components were not verified here. DOC-03 separately records browser-verified ACS candidate metadata; it does not establish stack compatibility or installed size.
 
 ## Proposed deployment and budget
 
@@ -49,7 +49,7 @@ One OpenSearch node, one Dashboards instance, one RabbitMQ, and adapter/worker r
 | RabbitMQ | 0.75 GiB; check broker memory/disk alarms against host/container |
 | Project processes combined | 1 GiB; analysis can run separately from peak ingestion |
 
-Total proposed ceilings: 7.25 GiB. These are starting limits to measure, not observed consumption. Treat 10 GB as the entire incremental disk budget: downloaded/unpacked images, cache, ACS dependencies if any, source/state, broker, indexes, logs, and evidence. Plan at least 2 GB of growth/headroom inside that budget; measure actual filesystem headroom and engine disk thresholds before setup. If it cannot fit, report the blocker and move to the main PC or revise packaging; do not disable disk safety thresholds or delete unrelated host data.
+Total proposed ceilings: 7.25 GiB. These are starting limits to measure, not observed consumption. Treat 10 GB as the entire incremental disk budget: downloaded/unpacked images, cache, ACS dependencies if any, source/state, broker, indexes, logs, and evidence. Plan at least 2 GB of growth/headroom inside that budget; measure actual filesystem headroom and engine disk thresholds before setup. ACS general hardware guidance alone lists 10 GB storage; the newer candidate image advertises 5.48 GB compressed, with actual installed/peak storage unknown (DOC-03). Do not reserve space using compressed size as an installed-size estimate. If it cannot fit, report the blocker and move to the main PC or revise packaging; do not disable disk safety thresholds or delete unrelated host data.
 
 Choose small ordinary corpus records so the complete acceptance dataset stays within 100 MiB; the maximum record-size case is a separate boundary test. Initially bound datasets to 100 MiB, ready queue bodies to 64 MiB, and quarantine to 64 MiB, with rotated runtime logs. These caps exclude engine overhead and do not replace total measurement. Pause before accepting more data at capacity; preserve existing accepted records.
 

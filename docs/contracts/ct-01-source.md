@@ -16,7 +16,7 @@ At most 65,536 decoded raw bytes and 131,072 serialized UTF-8 envelope/frame byt
 
 At size/capacity limits stop/reject before accepting additional data. Never truncate accepted raw content. Incomplete final NDJSON is pending during live reads; broken sealed input, changed accepted coordinates, or digest mismatch fails closed as source corruption. Valid framing containing malformed XML is different: that occurrence can reach quarantine while later records proceed.
 
-Moves/renames preserve generation identity and sequence. New rotated generations obtain new UUIDs. In-place truncation/rewrite of accepted data is unsupported and reported, not treated as a new file under old identity. Retain records/manifests throughout the supported replay window. Copying a corpus preserves its manifest; equal file content alone does not prove equal occurrences.
+Moves/renames preserve generation identity and sequence. New project-capture generations created by rotation obtain new UUIDs; native ACS export renames do not create new identities. In-place truncation/rewrite of accepted data is unsupported and reported, not treated as a new file under old identity. Retain records/manifests throughout the supported replay window. Copying a corpus preserves its manifest; equal file content alone does not prove equal occurrences.
 
 ## Envelope fields
 
@@ -46,7 +46,17 @@ Context can include `SourceObject`, `Host`, `Process`, `Thread`, `Context`, `Log
 
 Preserve mixed message text outside `Data` descendants in document order. Preserve `Data` as ordered `{name,value}` string pairs, including duplicate names and entries before/after message text. Require nonempty `Data.Name` and text/CDATA-only content. Unsupported child elements/conflicting namespaces are quarantined. Unknown attributes remain accessible in raw evidence. Prohibit DTDs, external entities/resource loading, and XInclude. Preserve exact raw whitespace independently of normalized text.
 
-This subset is grounded in historical formatter/tests, not claimed as complete current ACS compatibility. See [DOC-03](../research/acs-feasibility.md).
+This subset is grounded in historical formatter/tests, not claimed as complete current ACS compatibility. `Delouse`, `Archive`, `Alarm`, document wrappers and other unsupported roots are outside v1; a profile rejection does not mean the source is invalid ACS. See [DOC-03](../research/acs-feasibility.md).
+
+## Real XML export admission gate
+
+Before importing `real-export`, retain an approved sanitized source artifact and an export manifest identifying release/commit or image digest, exporter/version/options, source encoding, framing/wrapper/namespace, clock evidence and sanitization method. Obtain and compare the actual release's schema/IDL and sample behavior, recording any schema/wire mismatch; an old XSD or a Docker Hub tag is insufficient. A real capture is not automatically compatible with this project profile.
+
+Initially prefer sealed files. Determine complete XML element boundaries independently of physical lines: historical clients/stores differ in wrappers and may contain multiline CDATA. Keep the approved sanitized artifact intact and retain an ordered mapping from record byte ranges to project generation/sequence; resume/rename/reimport must reuse that mapping, including repeated equal records. Native filename, LogId and timestamp are not sufficient coordinates. Assign new generations only to independently captured/imported occurrences; retain the manifest for replay.
+
+V1 still requires UTF-8 payload bytes. Verify actual bytes; a historical logging-client file mode declares ISO-8859-1 and an old Java store uses `writeBytes`. Incompatible encoding requires a reviewed conversion/profile policy with original artifact and conversion provenance retained, not silent transcoding or a false exact-byte claim. Sanitized exports are derivative evidence, not byte-identical operational originals; preserve ordering/multiplicity and describe changes before assigning the retained project capture.
+
+Verify producer clock/timezone explicitly. The manual's TAI statement conflicts with historical Java local-time formatting; do not infer UTC or TAI from a zone-free string or host assumptions. In v1 unresolved time stays `unknown`, with null UTC projection. Framing, byte fidelity, closure/rotation and known-marker delivery remain runtime checks, not capabilities established by this contract.
 
 ## OFFLINE JSON profile
 

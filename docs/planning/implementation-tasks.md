@@ -18,7 +18,7 @@
 ## IMP-02 — Synthetic sources, capture corpus, and independent oracle
 
 - Branch: `feature/synthetic-log-sources`; milestone: M1; depends on IMP-01.
-- Scope: XML mock, small OFFLINE API simulator, durable capture/manifests, deterministic 1,000-valid-occurrence corpus per family, separate invalid fixtures and incident/negative cases. Disclose synthetic source mode and any cross-source identifier link. No claim of real ACS integration.
+- Scope: XML mock, small OFFLINE API simulator, durable capture/manifests, deterministic 1,000-valid-occurrence corpus per family, separate invalid fixtures and incident/negative cases. Record whether a vetted sanitized ACS export is available under CT-01; absent such a corpus, use the documented mock per DOC-03. A future real import must meet the release/encoding/framing/clock admission gate and preserve occurrence mapping. Disclose synthetic source mode and any cross-source identifier link. No claim of real ACS integration.
 - Traceability: RF-01/RF-02/RF-04, RC-04, CA-01/CA-05/CA-07, CT-01.
 - Acceptance: valid/invalid XML and JSON, Unicode, CDATA, multiline/duplicate Data, valid UTC plus unsupported-time examples; equal XML/timestamps at different coordinates; durable identity allocation and partial-append recovery; bounded source output; independently authored expected coordinates/dispositions. Contract examples are a seed, not the complete 2,000-event corpus.
 - Evidence: manifest and expected sets created before pipeline processing; source provenance and capture boundary documented.

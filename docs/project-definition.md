@@ -113,6 +113,6 @@ The original before-3-November target meant **2 November 2026, America/Santiago*
 - Date: **3 November 2026, America/Santiago**.
 - Owner instruction: **"go ahead"**, following the proposed DOC-03 investigation and technical-design/contracts PR sequence.
 - Effect: authorize research and a reviewable documentation proposal; no runtime implementation, ACS installation, container pulls, or agent execution inferred.
-- Research outcome: [DOC-03](research/acs-feasibility.md) completed early with current-source access/footprint verification blocked. Recommend the XML mock initially, retaining a real-export path for the main PC; this is not evidence of runtime ACS incompatibility.
+- Research outcome: [DOC-03](research/acs-feasibility.md) now includes a public-browser follow-up: Confluence and ACS registry metadata are verified; modern schema/runtime and installed footprint remain unverified. Prefer a vetted sanitized export when available; use the XML mock immediately while no corpus exists, with a future main-PC logging-client experiment. This is a technical proposal, not runtime authorization or evidence of ACS incompatibility.
 - Proposed next baseline: ADR-0002/0003, CT-01 through CT-04, candidate versions/resources, and acceptance parameters. See the [review guide](review/technical-design.md) and [task specifications](planning/implementation-tasks.md).
 - Status: research findings documented; technical decisions/contracts await review. Prior scope/C4/Compose approvals remain intact. Runtime acceptance is unexecuted.

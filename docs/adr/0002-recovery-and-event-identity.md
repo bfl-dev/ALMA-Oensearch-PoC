@@ -15,7 +15,7 @@ Persist a lowercase UUID `generation_id` manifest before records. Allocate conti
 
 The capture file stores complete newline-terminated envelopes with base64 raw bytes. Sync the frame before accepting the event. Manifest creation uses an atomic write and file/parent-directory sync. Resume writers by scanning complete frames; an incomplete final append was not accepted and can be repaired before the next occurrence. Never reuse an accepted sequence.
 
-The guarantee begins at durable project capture or confirmed broker acceptance, with storage retained. Upstream ACS loss, uncaptured events, corrupt/deleted sources, destroyed volumes, disk failure, and unbounded production are outside it. Real ACS needs a separately verified upstream export contract.
+The guarantee begins at durable project capture or confirmed broker acceptance, with storage retained. Upstream ACS loss, uncaptured events, corrupt/deleted sources, destroyed volumes, disk failure, and unbounded production are outside it. Real ACS needs a separately verified upstream export contract. Browser-reviewed Notification Channel documentation describes discard/reliability limits; auto-reconnection does not establish lossless delivery. Historical native file-store names change on closure and the file-count setting warns rather than deleting to enforce a cap. CT-01 therefore requires retained sealed-artifact/byte-range mapping before real import; see [DOC-03](../research/acs-feasibility.md).
 
 ## Checkpoints and replay
 

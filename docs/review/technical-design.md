@@ -8,11 +8,11 @@ Read the [ACS feasibility report](../research/acs-feasibility.md), [ADR-0002](..
 
 | Decision to review | Proposed answer | Limitation/evidence |
 | --- | --- | --- |
-| Initial ONLINE source | Documented XML mock; revisit real export on main PC | Current ALMA source access and complete ACS image footprint could not be verified; no install attempted |
+| Initial ONLINE source | Prefer vetted sanitized real export when available; mock immediately while no corpus exists; main-PC logging-client experiment later | Confluence, image digests/platforms/compressed sizes now verified; modern schema/runtime and total storage fit remain unverified |
 | Processing and persistence | Python with SQLite checkpoint/quarantine stores | Clear boundaries, but reconnect/commit/ack behavior still needs tests; Logstash not claimed incapable |
 | Occurrence/recovery model | Generation UUID + sequence; retained capture; confirmed publication; create/compare before consumer ack | At-least-once delivery with idempotent effects; no storage-loss or exactly-once claim |
 | Destination and retention | Concrete poc-events-v1, one parser, retained run until explicit teardown | No rollover/deletion during replay; corrected materializations separately scoped |
-| XML/time profile | Historical-format subset; declared UTC mock, TAI/unknown preserved with null UTC | No claim of current ACS schema validation or TAI conversion |
+| XML/time profile | Historical-format subset; declared UTC mock, TAI/unknown preserved with null UTC | Real-export gate covers byte/framing/encoding/clock evidence; no current ACS schema validation or TAI conversion |
 | Versions and resources | OpenSearch/Dashboards 3.9.0, RabbitMQ 4.4.0, Python/client candidates and bounded Compose proposal | Release metadata reviewed; registry digests, full footprint and runtime compatibility checks pending setup |
 | Acceptance | 2,000-valid-event corpus proposal, 60 s outage/120 s drain proposal plus concrete contract bounds and small analysis windows | No measurements or passing runtime scenarios yet |
 

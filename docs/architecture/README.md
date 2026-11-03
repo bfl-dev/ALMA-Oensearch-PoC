@@ -90,7 +90,7 @@ The component layout is approved; these new technical answers are proposals, not
 
 | Earlier question | Proposed answer | Authoritative detail |
 | --- | --- | --- |
-| Real ACS or mock? | Mock first on the temporary host; revisit real XML export on the main PC after verified access/footprint | DOC-03 and ADR-0003 |
+| Real ACS or mock? | Prefer reviewed sanitized export if available; mock immediately without a corpus; main-PC logging-client test after capacity preflight | DOC-03 and ADR-0003 |
 | Occurrence identity? | Persisted generation UUID plus contiguous sequence, independent of body/time/path | CT-01 and ADR-0002 |
 | Checkpoint/acknowledgment timing? | Routable durable broker confirm before source progress; indexed or committed quarantine disposition before consumer ack | CT-02/CT-03 |
 | Processing tool? | One small Python codebase instead of adding Logstash for this demo | ADR-0003 |
