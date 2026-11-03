@@ -54,6 +54,33 @@ Normalization placement, raw/quarantine storage, and how analysis runs remain op
 
 Level 4 is not required. Add level 3 only if it clarifies adapter/indexer internal responsibilities. A later deployment view will fix nodes, volumes, ports, resources, versions, and local exposure. The proposed demo does not require Kubernetes or multiple hosts.
 
+## Execution constraints confirmed on 3 November 2026
+
+Owner-provided constraints, not independently measured hardware:
+
+| Item | Confirmed constraint |
+| --- | --- |
+| Host | Owner's current machine; native execution or Docker on that same host is acceptable |
+| CPU | Intel Core i5-11300H |
+| Memory | 16 GB total host RAM, shared with the operating system and other applications |
+| Storage | Up to 10 GB available for this project |
+| ACS investigation | At most two hours to assess a minimal real ACS producer/capture path; finish earlier if feasibility or a blocker becomes clear |
+
+The two-hour limit is an investigation ceiling, not a duration estimate or a guarantee of real integration. Record the ACS release, candidate source, dependencies, estimated footprint, and outcome. If blocked at the limit or clearly incompatible with the resource budget earlier, document the reason and use the already approved XML mock fallback. Selecting a mock does not establish real ACS integration.
+
+### Proposed local deployment budget
+
+Use Docker Compose as the preferred packaging proposal, with separate containers for OpenSearch, Dashboards, RabbitMQ, and the small project processes as needed. These services share the host's CPU, RAM, and disk; a container does not supply additional capacity. Native execution remains acceptable. No runtime configuration is introduced by this document.
+
+- Start with one OpenSearch node and one RabbitMQ instance, persistent project volumes, and small bounded datasets. This is a restart/recovery demo, not a high-availability deployment.
+- Target an initial combined memory budget of approximately 6–8 GB for the PoC, leaving room for the host and other applications. This is an engineering estimate to validate, not measured usage or an approved performance target. Set OpenSearch heap separately from its total process/container memory.
+- Treat 10 GB as the full incremental project storage budget: downloaded/unpacked images, build cache, any ACS checkout/dependencies, raw data, broker/quarantine storage, indexes, runtime logs, and evidence. Images and build artifacts may be the limiting factor.
+- Before installation, estimate the selected versions' complete footprint and verify actual free space in the runtime and volume filesystems. Keep growth headroom within the project budget; if the footprint does not fit, revise packaging or defer the real ACS environment before downloading/building it. Do not delete unrelated host data or promise that the complete stack fits before measurement.
+- Bound source generation, backlog, quarantine, and runtime log growth. When capacity is reached, stop/pause production or ingestion with a visible reason while retaining recoverable records; do not silently discard accepted events.
+- Pin compatible OpenSearch/Dashboards and RabbitMQ versions after the footprint review. Record deployment checks and peak usage in the [validation plan](../validation.md).
+
+Packaging guidance: [official OpenSearch Docker documentation](https://docs.opensearch.org/latest/install-and-configure/install-opensearch/docker/), reviewed on 3 November 2026. It documents single-node deployment, Compose, persistent volumes, and explicit resource configuration; it does not certify this project's proposed budget.
+
 ## Questions to resolve in detailed design
 
 | Question | Required evidence or decision |
@@ -74,13 +101,13 @@ Approval covers the logical layout above. These questions turn that layout into 
 
 | Question | Meaning and why it matters | Recommended starting point | Input or evidence needed |
 | --- | --- | --- | --- |
-| Real ACS component | Decide how real XML reaches our adapter. Running the full ACS environment may take more effort than the demo warrants. | Investigate a minimal real producer and an external XML capture/export path within an agreed time budget; use a documented mock if blocked. The supplied research identifies `acsXmlFileStore` as a candidate, not a confirmed working integration. | Owner: time budget and any existing usable ACS environment. Engineering: release, dependencies, format/schema, and reproducible evidence. |
+| Real ACS component | Decide how real XML reaches our adapter. Running the full ACS environment may take more effort than the demo warrants. | Investigate a minimal real producer and an external XML capture/export path within an agreed time budget; use a documented mock if blocked. The supplied research identifies `acsXmlFileStore` as a candidate, not a confirmed working integration. | Owner confirmed a two-hour investigation ceiling. Engineering: identify any usable ACS environment, release, dependencies, format/schema, and reproducible evidence within the host budget. |
 | File/generation/occurrence identity | A path can be reused after rotation. Two records with identical text can still be different occurrences. | Persist an archive/generation identity and record position; keep those coordinates on copies and replay. Use a persistent run identity and sequence for synthetic producers. Do not assume `LogId` is unique per occurrence. | CT-01: exact framing, rotation/truncation behavior, copied-file provenance, and identity examples. |
 | Checkpoints and acknowledgments | A checkpoint says how far the adapter has safely progressed; an acknowledgment lets RabbitMQ remove a delivery. Doing either too early can lose data. | Advance only the contiguous source prefix confirmed as durably accepted and routed; acknowledge consumer deliveries only after successful indexing or confirmed durable quarantine. Retry uncertain outcomes with the original identity. | ADR-0002 and CT-02/CT-03: durable configuration, unroutable messages, partial bulk failures, confirmation loss, and backpressure. |
 | Processing/indexing tool | Decide what parses XML/JSON, normalizes records, retries failures, and writes to OpenSearch. | Compare a small Python worker with Logstash before selecting. Favor explicit, inspectable control over occurrence identity and per-event results; avoid introducing both without a concrete need. | Brief comparison of code/configuration effort, dependency support, and guarantee coverage. |
 | Raw records and quarantine | Raw records preserve the original input. Quarantine retains invalid records with the reason they could not be indexed, so one malformed event does not disappear or block the pipeline forever. | Retained source corpus on a persistent volume; raw record/reference in the envelope. Evaluate a durable RabbitMQ quarantine queue with confirmed publication before acknowledging the original, plus a way to inspect/export/reprocess it. | Storage limits, retention, full-disk behavior, restart persistence, and quarantine failure handling. |
 | Destination index | The same `event_id` written to different indexes can still produce two searchable copies. | One fixed concrete events index for the bounded demo; separate analysis results. Keep retention/rollover outside the guaranteed replay window and document the policy. | CT-03: index naming, reprocessing/result-version policy, retention, and supported replay window. |
-| Nodes and versions | Choose how many instances run, which exact releases they use, and the resources/ports/volumes required. | One local RabbitMQ, one OpenSearch node, and matching Dashboards for the essential demo. Pin compatible versions after checking resources. This does not demonstrate high availability. | Owner: execution machine, available RAM/CPU/disk, and acceptable runtime/container tooling. Engineering: version compatibility and resource budget. |
+| Nodes and versions | Choose how many instances run, which exact releases they use, and the resources/ports/volumes required. | One local RabbitMQ, one OpenSearch node, and matching Dashboards for the essential demo. Pin compatible versions after checking resources. This does not demonstrate high availability. | Host confirmed above: i5-11300H, 16 GB total RAM, 10 GB project storage; native or local Docker acceptable. Engineering: node/resource allocation, exact versions, and measured footprint. |
 | Small analysis scope | Define useful correlation and patterns without turning the demo into a general analytics platform. | One synthetic incident; one or two rules based on observed identifiers and time windows; grouping of normalized messages with counts and examples. Explain every link and disclose synthetic cross-source relationships. | CT-04 and CA-08/CA-09: expected inputs/outputs, rule versions, windows, and false-link examples. |
 
 ### How the supplied ACS investigation informs the next stage

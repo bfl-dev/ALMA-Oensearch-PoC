@@ -70,8 +70,8 @@ Proposal: document on 1 November, close decisions and contracts at the start of 
 | Item | Scope or remaining decision | Status |
 | --- | --- | --- |
 | Essential scope | First-version table above | Approved |
-| Real ACS versus mock | Prioritize real ACS with bounded investigation; record the blocker before switching to a mock | Approach approved; effort limit and XML source still to define |
-| Resources and topology | Simple local environment; define node count and resources using available hardware | Local scope approved; topology and resources pending |
+| Real ACS versus mock | Prioritize real ACS with bounded investigation; record the blocker before switching to a mock | Two-hour investigation ceiling approved on 3 November 2026; component/XML source still to establish |
+| Resources and topology | Simple local environment; define node count and resources using available hardware | Current host confirmed on 3 November 2026: i5-11300H, 16 GB total RAM, 10 GB project storage; native or local Docker acceptable. Detailed deployment pending |
 | Correlation and patterns | Explainable rules and grouping/frequencies, initially without ML | Initial scope approved |
 | Guarantees | Process failures and restart with persisted data, excluding storage loss | Boundaries approved; exact acceptance/checkpoint contracts pending |
 | Quantitative acceptance | Tentative parameters in the validation plan | Pending detailed agreement |
@@ -95,3 +95,10 @@ Proposal: document on 1 November, close decisions and contracts at the start of 
 - Baseline: conceptual C4 context and logical-container views in `docs/architecture/README.md` at revision `5e28f390edba5881269471d1cfd2e1401e56f322`.
 - Effect: approve the component responsibilities and logical connections. The remaining engineering questions are explained in the architecture document; their candidate answers are recommendations, not newly approved decisions.
 - Still open: ACS integration/time budget, detailed identity and recovery rules in ADR-0002, processing/storage tools, index policy, deployment versions/resources, contracts, and quantitative validation targets. This approval does not authorize implementation or merge PR #1.
+
+### Host and ACS investigation follow-up
+
+- Date: **3 November 2026, America/Santiago**.
+- Owner confirmed the current machine as the demo host: Intel Core i5-11300H, 16 GB total RAM, and 10 GB available project storage. Native execution or Docker on this machine is acceptable.
+- The owner accepted the proposed **two-hour maximum ACS feasibility investigation**. It may conclude earlier; record the outcome and blocker before invoking the already approved mock fallback.
+- These constraints supersede the previously open host and investigation-budget items. Exact versions, allocation, real ACS source, contracts, and validation targets remain open. See the [architecture execution constraints](architecture/README.md#execution-constraints-confirmed-on-3-november-2026).
