@@ -22,11 +22,11 @@ A failing scenario still fails even if the global total matches because losses a
 
 ## Resource preflight and accounting
 
-Confirmed host: i5-11300H, 16 GB total RAM, with a 10 GB project storage allowance; native or local Docker execution is acceptable. See the [execution constraints](architecture/README.md#execution-constraints-confirmed-on-3-november-2026) for the tentative deployment budget and two-hour ACS investigation ceiling.
+Confirmed temporary host: i5-11300H, 16 GB total RAM, with a 10 GB project storage allowance. Docker Compose is the accepted packaging approach. A more powerful main PC is planned; its specifications remain to be recorded. See the [execution constraints](architecture/README.md#execution-constraints-confirmed-on-3-november-2026) for the tentative deployment budget and two-hour ACS investigation ceiling.
 
 Before future runtime setup, record available host memory, actual free space on the image/cache and volume filesystems, selected versions, image/dependency footprint estimates, and remaining growth headroom. The 10 GB allowance covers the entire project's incremental footprint, not just OpenSearch documents. Defer installation if it cannot fit.
 
-During future runs, report total and peak memory/disk consumption, including images/build cache, source data, broker/quarantine state, indexes, and runtime logs. Verify bounded production/backpressure at capacity without deleting pending events. No capacity results exist yet.
+During future runs, report total and peak memory/disk consumption, including images/build cache, source data, broker/quarantine state, indexes, and runtime logs. Verify bounded production/backpressure at capacity without deleting pending events. No capacity results exist yet. When moving to the main PC, repeat resource preflight and baseline measurements with its configuration recorded; retain the temporary-host results as a separate environment.
 
 ## Oracle and evidence
 

@@ -60,17 +60,20 @@ Owner-provided constraints, not independently measured hardware:
 
 | Item | Confirmed constraint |
 | --- | --- |
-| Host | Owner's current machine; native execution or Docker on that same host is acceptable |
+| Host | Temporary development/demo host: the owner's current machine. A more powerful main PC is planned; its specifications are not yet recorded |
 | CPU | Intel Core i5-11300H |
 | Memory | 16 GB total host RAM, shared with the operating system and other applications |
-| Storage | Up to 10 GB available for this project |
+| Storage | Up to 10 GB available for this project on the temporary host |
+| Packaging | Docker Compose accepted by the owner on 3 November 2026; use the same approach on the future main PC |
 | ACS investigation | At most two hours to assess a minimal real ACS producer/capture path; finish earlier if feasibility or a blocker becomes clear |
 
 The two-hour limit is an investigation ceiling, not a duration estimate or a guarantee of real integration. Record the ACS release, candidate source, dependencies, estimated footprint, and outcome. If blocked at the limit or clearly incompatible with the resource budget earlier, document the reason and use the already approved XML mock fallback. Selecting a mock does not establish real ACS integration.
 
-### Proposed local deployment budget
+### Accepted packaging and proposed local deployment budget
 
-Use Docker Compose as the preferred packaging proposal, with separate containers for OpenSearch, Dashboards, RabbitMQ, and the small project processes as needed. These services share the host's CPU, RAM, and disk; a container does not supply additional capacity. Native execution remains acceptable. No runtime configuration is introduced by this document.
+The owner accepted Docker Compose as the packaging approach on 3 November 2026. The proposed service split is separate containers for OpenSearch, Dashboards, RabbitMQ, and the small project processes as needed. These services share the host's CPU, RAM, and disk; a container does not supply additional capacity. Exact versions, resource allocations, and service configuration remain detailed design work. No runtime configuration is introduced by this document.
+
+The current hardware budget is temporary, not the project's permanent capacity ceiling. Keep paths, volumes, and resource settings configurable for the future main PC. On that host, record its specifications and repeat resource/capacity measurements; do not assume larger topology or high availability merely because more hardware is available.
 
 - Start with one OpenSearch node and one RabbitMQ instance, persistent project volumes, and small bounded datasets. This is a restart/recovery demo, not a high-availability deployment.
 - Target an initial combined memory budget of approximately 6–8 GB for the PoC, leaving room for the host and other applications. This is an engineering estimate to validate, not measured usage or an approved performance target. Set OpenSearch heap separately from its total process/container memory.

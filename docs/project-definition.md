@@ -71,7 +71,7 @@ Proposal: document on 1 November, close decisions and contracts at the start of 
 | --- | --- | --- |
 | Essential scope | First-version table above | Approved |
 | Real ACS versus mock | Prioritize real ACS with bounded investigation; record the blocker before switching to a mock | Two-hour investigation ceiling approved on 3 November 2026; component/XML source still to establish |
-| Resources and topology | Simple local environment; define node count and resources using available hardware | Current host confirmed on 3 November 2026: i5-11300H, 16 GB total RAM, 10 GB project storage; native or local Docker acceptable. Detailed deployment pending |
+| Resources and topology | Simple local environment; define node count and resources using available hardware | Temporary host confirmed on 3 November 2026: i5-11300H, 16 GB total RAM, 10 GB project storage. Docker Compose accepted; future main PC specifications and detailed deployment pending |
 | Correlation and patterns | Explainable rules and grouping/frequencies, initially without ML | Initial scope approved |
 | Guarantees | Process failures and restart with persisted data, excluding storage loss | Boundaries approved; exact acceptance/checkpoint contracts pending |
 | Quantitative acceptance | Tentative parameters in the validation plan | Pending detailed agreement |
@@ -102,3 +102,10 @@ Proposal: document on 1 November, close decisions and contracts at the start of 
 - Owner confirmed the current machine as the demo host: Intel Core i5-11300H, 16 GB total RAM, and 10 GB available project storage. Native execution or Docker on this machine is acceptable.
 - The owner accepted the proposed **two-hour maximum ACS feasibility investigation**. It may conclude earlier; record the outcome and blocker before invoking the already approved mock fallback.
 - These constraints supersede the previously open host and investigation-budget items. Exact versions, allocation, real ACS source, contracts, and validation targets remain open. See the [architecture execution constraints](architecture/README.md#execution-constraints-confirmed-on-3-november-2026).
+
+### Temporary host and packaging clarification
+
+- Date: **3 November 2026, America/Santiago**.
+- The owner clarified that the current machine is temporary and a more powerful main PC will be used when available. Its specifications are pending; the current 16 GB RAM / 10 GB storage allowance is not a permanent project limit.
+- The owner accepted **Docker Compose** as the deployment approach. Exact versions, resource allocations, and configuration remain engineering details.
+- The documentation baseline may be merged with those details explicitly open. Merging this definition PR does not approve every candidate technical answer or authorize implementation; detailed decisions, contracts, planning, and implementation authorization follow in the agreed sequence.
