@@ -1,6 +1,6 @@
 # Requirements and acceptance criteria
 
-**Status:** draft. These requirements derive from owner decisions and the proposed demo; they are not yet an approved baseline or verified results.
+**Status:** detailed acceptance baseline proposed for technical-design review. Requirements derive from the approved scope/owner decisions; exact contracts and quantitative targets await review. No scenario is an executed result.
 
 ## Functional requirements
 
@@ -77,4 +77,4 @@ A batch mixes valid records, invalid XML, and a permanent indexing rejection. Va
 
 A reviewer follows instructions from a clean environment with declared prerequisites and obtains the agreed results. The report records the commit, versions, hardware, configuration, corpus, counts, timings, and limitations. Any unexecuted criterion is marked pending; no high-availability or operational-scale claims are made without evidence.
 
-Load, timing, and retention parameters are proposed in the [validation plan](validation.md); they must be approved and fixed before tests are executed.
+Load, timing, and retention parameters are proposed in the [validation plan](validation.md); they must be approved and fixed before tests are executed. The detailed implementation boundaries are in [CT-01 through CT-04](contracts/README.md). In v1, time-based incident/correlation acceptance uses declared UTC synthetic records; TAI/unknown records retain original time with a null UTC projection and an explicit status, pending a verified real-source conversion policy.

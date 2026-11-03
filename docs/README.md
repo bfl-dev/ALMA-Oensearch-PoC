@@ -1,16 +1,16 @@
 # Documentation index
 
-Status as of 1 November 2026: **project definition approved; architecture and contracts next**. Detailed design and quantitative acceptance remain pending; implementation has not started.
+Status as of 3 November 2026: **scope and conceptual C4 approved; technical-design proposals ready for review**. DOC-03 documentary research is complete. Contract/ADR proposals and quantitative acceptance remain pending approval; implementation has not started.
 
 ## Reading order
 
 1. [Project definition](project-definition.md): purpose, owner decisions, approved essential scope, extensions, and the approval record.
 2. [Requirements](requirements.md): expected behavior and proposed acceptance criteria.
-3. [Architecture](architecture/README.md): conceptual C4 views and questions requiring evaluation.
+3. [ACS feasibility](research/acs-feasibility.md), then [architecture](architecture/README.md): research outcome, approved logical layout, and proposed detailed answers.
 4. [ADRs](adr/README.md): owner decisions and proposals with their consequences.
-5. [Contracts](contracts/README.md): boundaries, identity, errors, and guarantees to specify.
+5. [Contracts](contracts/README.md): proposed CT-01 through CT-04, envelope schema, and synthetic valid/invalid examples.
 6. [Validation](validation.md): scenarios, counting oracle, and demonstration evidence.
-7. [Planning](planning/README.md): milestones, dependencies, and issue/agent-task preparation.
+7. [Planning](planning/README.md) and [task specifications](planning/implementation-tasks.md): milestones, dependencies, and proposed issue-ready work.
 8. [References](references/README.md): sources reviewed, evidence boundaries, and pending references.
 9. [Development workflow](development-workflow.md): branch naming, PR titles, and review conventions.
 

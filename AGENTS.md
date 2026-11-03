@@ -2,7 +2,7 @@
 
 ## Status and authorization
 
-The project definition was explicitly approved by the owner on 1 November 2026 (America/Santiago); see the approval record in `docs/project-definition.md`. Continue the agreed sequence with architecture/ADR evaluation, contracts, and planning. The owner approved the conceptual C4 architecture on 3 November 2026 (America/Santiago); see `docs/architecture/README.md`. Detailed contracts, deployment choices, recovery mechanics, and quantitative targets remain open; no implementation has started.
+The project definition was explicitly approved by the owner on 1 November 2026 (America/Santiago); see the approval record in `docs/project-definition.md`. Continue the agreed sequence with architecture/ADR evaluation, contracts, and planning. The owner approved the conceptual C4 architecture on 3 November 2026 (America/Santiago); see `docs/architecture/README.md`. Detailed contracts, tooling, recovery mechanics, and quantitative targets are proposed on branch `docs/technical-design` for review; no implementation has started. Docker Compose is accepted, and the current host is temporary. The owner authorized DOC-03 research and preparation of the technical-design PR, not runtime implementation.
 
 - Do not create application code, simulators, runnable infrastructure, containers, dependencies, CI, or software tests until the owner authorizes implementation of the reviewed scope.
 - Do not delegate execution to agents without the owner's authorization. Task documents are preparation, not execution instructions.
@@ -13,8 +13,10 @@ The project definition was explicitly approved by the owner on 1 November 2026 (
 
 - Use English for repository documentation, diagrams, templates, issues, PR titles and descriptions, and commit messages. Preserve proper names, source filenames, and established identifiers.
 - Name branches `<type>/<kebab-case-description>` according to the change: `feature/`, `docs/`, `fix/`, `refactor/`, `test/`, `chore/`, `ci/`, or `build/`. See `docs/development-workflow.md` for the corresponding PR title types.
-- For this change, use `docs/project-definition` and a PR title of `docs: <outcome>`.
+- Use `docs/technical-design` for the current research/contracts PR and `docs: <outcome>` for its title. Future branches follow their actual change type.
 - Distinguish owner decisions, proposals, and verified evidence.
+- Contract schemas and synthetic static examples under `docs/contracts/` are design artifacts. They do not authorize application code, a simulator, runnable infrastructure, or software tests.
+- Read CT-01 through CT-04 and ADR-0002/0003 before preparing implementation work; do not invent an interface or assume proposed pins were integration-tested.
 - Link requirements, ADRs, contracts, and evidence through their identifiers.
 - Do not describe goals or pending tests as achieved results.
 - Do not present the 2018 paper as evidence of ALMA's current infrastructure.

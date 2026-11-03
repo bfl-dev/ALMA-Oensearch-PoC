@@ -26,10 +26,10 @@ flowchart TD
     reviewer["Person: reviewer or developer"]
     subgraph poc["System: observability PoC"]
         adapters["Source adapters and historical ingestion"]
-        sourceState[("Persistent state: identity and checkpoints")]
+        sourceState[("Persistent state: identity and checkpoints (SQLite proposed)")]
         broker[("RabbitMQ: persistent transport")]
         worker["Processor and indexer"]
-        quarantine[("Durable quarantine: technology pending")]
+        quarantine[("Durable quarantine: SQLite proposed")]
         search[("OpenSearch: events and results")]
         dashboard["OpenSearch Dashboards: search and visualization"]
         analysis["Analysis: incidents, correlation, and patterns"]
@@ -39,7 +39,7 @@ flowchart TD
         worker -->|"Indexing and per-event result"| search
         worker -->|"Unprocessable inputs and reason"| quarantine
         dashboard -->|"Queries"| search
-        analysis <-->|"Queries and explainable results"| search
+        analysis <-->|"Queries and source events"| search
     end
     online -->|"XML"| adapters
     offline -->|"Application logs"| adapters
@@ -48,7 +48,7 @@ flowchart TD
     reviewer -->|"Run analysis"| analysis
 ```
 
-Normalization placement, raw/quarantine storage, and how analysis runs remain open. Processing may use a small application or an existing tool; Logstash is not assumed mandatory. OFFLINE goes through RabbitMQ by this PoC's design decision, not as a claim about the historical system.
+The detailed-design proposal places payload normalization in a Python worker, keeps captured raw records on a persistent source volume, uses SQLite for checkpoints/quarantine, and runs analysis on demand. See [ADR-0003](../adr/0003-tools-and-local-deployment.md) and [CT-01 through CT-04](../contracts/README.md). Those technology/configuration details remain proposed; the conceptual C4 responsibilities are approved. OFFLINE goes through RabbitMQ by this PoC's design decision, not as a claim about the historical system.
 
 ## Level 3 and deployment
 
@@ -84,34 +84,22 @@ The current hardware budget is temporary, not the project's permanent capacity c
 
 Packaging guidance: [official OpenSearch Docker documentation](https://docs.opensearch.org/latest/install-and-configure/install-opensearch/docker/), reviewed on 3 November 2026. It documents single-node deployment, Compose, persistent volumes, and explicit resource configuration; it does not certify this project's proposed budget.
 
-## Questions to resolve in detailed design
+## Detailed-design answers proposed for review
 
-| Question | Required evidence or decision |
-| --- | --- |
-| Which real ACS component is feasible within the deadline? | Source/version, dependencies, and criterion for fallback to a mock |
-| How are file, generation, and occurrence identified? | CT-01 and counterexamples involving rotation/replay/repetition |
-| When do checkpoints advance and messages get acknowledged? | ADR-0002 and CA-03/CA-04/CA-11 |
-| Which tool processes and indexes events? | Brief comparison of complexity and support for guarantees |
-| Where are raw records and quarantine retained? | Persistence, inspection, and replay without silent loss |
-| Which index receives a late redelivery? | Stable destination identity throughout the replay window |
-| How many nodes and which versions? | Available resources and goals; do not infer high availability |
-| How can analysis stay small? | Initial rules and grouping; CT-04 and CA-08/CA-09 |
+The component layout is approved; these new technical answers are proposals, not implicit owner decisions. [DOC-03](../research/acs-feasibility.md) records the research evidence and limitations.
 
+| Earlier question | Proposed answer | Authoritative detail |
+| --- | --- | --- |
+| Real ACS or mock? | Prefer reviewed sanitized export if available; mock immediately without a corpus; main-PC logging-client test after capacity preflight | DOC-03 and ADR-0003 |
+| Occurrence identity? | Persisted generation UUID plus contiguous sequence, independent of body/time/path | CT-01 and ADR-0002 |
+| Checkpoint/acknowledgment timing? | Routable durable broker confirm before source progress; indexed or committed quarantine disposition before consumer ack | CT-02/CT-03 |
+| Processing tool? | One small Python codebase instead of adding Logstash for this demo | ADR-0003 |
+| Raw/quarantine persistence? | Retained capture corpus and idempotent worker SQLite quarantine | CT-01/CT-03 |
+| Destination index? | Concrete poc-events-v1 throughout the retained run; no rollover/deletion during replay | CT-03 |
+| Nodes/versions/resources? | One OpenSearch, one RabbitMQ, matching Dashboards; candidate release pins and configurable bounds | ADR-0003; runtime footprint verification pending |
+| Small analysis? | One synthetic incident, bounded identifier rules, and versioned message-template grouping; output JSON reports | CT-04 |
 
-## What the remaining questions mean
-
-Approval covers the logical layout above. These questions turn that layout into precise contracts and a reproducible deployment. Recommendations below are **proposed**, not owner decisions or verified runtime behavior.
-
-| Question | Meaning and why it matters | Recommended starting point | Input or evidence needed |
-| --- | --- | --- | --- |
-| Real ACS component | Decide how real XML reaches our adapter. Running the full ACS environment may take more effort than the demo warrants. | Investigate a minimal real producer and an external XML capture/export path within an agreed time budget; use a documented mock if blocked. The supplied research identifies `acsXmlFileStore` as a candidate, not a confirmed working integration. | Owner confirmed a two-hour investigation ceiling. Engineering: identify any usable ACS environment, release, dependencies, format/schema, and reproducible evidence within the host budget. |
-| File/generation/occurrence identity | A path can be reused after rotation. Two records with identical text can still be different occurrences. | Persist an archive/generation identity and record position; keep those coordinates on copies and replay. Use a persistent run identity and sequence for synthetic producers. Do not assume `LogId` is unique per occurrence. | CT-01: exact framing, rotation/truncation behavior, copied-file provenance, and identity examples. |
-| Checkpoints and acknowledgments | A checkpoint says how far the adapter has safely progressed; an acknowledgment lets RabbitMQ remove a delivery. Doing either too early can lose data. | Advance only the contiguous source prefix confirmed as durably accepted and routed; acknowledge consumer deliveries only after successful indexing or confirmed durable quarantine. Retry uncertain outcomes with the original identity. | ADR-0002 and CT-02/CT-03: durable configuration, unroutable messages, partial bulk failures, confirmation loss, and backpressure. |
-| Processing/indexing tool | Decide what parses XML/JSON, normalizes records, retries failures, and writes to OpenSearch. | Compare a small Python worker with Logstash before selecting. Favor explicit, inspectable control over occurrence identity and per-event results; avoid introducing both without a concrete need. | Brief comparison of code/configuration effort, dependency support, and guarantee coverage. |
-| Raw records and quarantine | Raw records preserve the original input. Quarantine retains invalid records with the reason they could not be indexed, so one malformed event does not disappear or block the pipeline forever. | Retained source corpus on a persistent volume; raw record/reference in the envelope. Evaluate a durable RabbitMQ quarantine queue with confirmed publication before acknowledging the original, plus a way to inspect/export/reprocess it. | Storage limits, retention, full-disk behavior, restart persistence, and quarantine failure handling. |
-| Destination index | The same `event_id` written to different indexes can still produce two searchable copies. | One fixed concrete events index for the bounded demo; separate analysis results. Keep retention/rollover outside the guaranteed replay window and document the policy. | CT-03: index naming, reprocessing/result-version policy, retention, and supported replay window. |
-| Nodes and versions | Choose how many instances run, which exact releases they use, and the resources/ports/volumes required. | One local RabbitMQ, one OpenSearch node, and matching Dashboards for the essential demo. Pin compatible versions after checking resources. This does not demonstrate high availability. | Host confirmed above: i5-11300H, 16 GB total RAM, 10 GB project storage; native or local Docker acceptable. Engineering: node/resource allocation, exact versions, and measured footprint. |
-| Small analysis scope | Define useful correlation and patterns without turning the demo into a general analytics platform. | One synthetic incident; one or two rules based on observed identifiers and time windows; grouping of normalized messages with counts and examples. Explain every link and disclose synthetic cross-source relationships. | CT-04 and CA-08/CA-09: expected inputs/outputs, rule versions, windows, and false-link examples. |
+Remaining review items are explicit in the [technical-design review guide](../review/technical-design.md). No runnable infrastructure is included.
 
 ### How the supplied ACS investigation informs the next stage
 

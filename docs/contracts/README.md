@@ -1,50 +1,27 @@
 # Component contracts
 
-**Status:** proposed inventory, not an approved software contract. There are no schemas, APIs, or executable configuration at this stage.
+**Status:** proposed v1 contracts for technical-design review. Static schemas and examples specify interfaces; they are not a running pipeline or approved implementation.
 
-## Boundaries to specify
+| Contract | Boundary and content | Acceptance |
+| --- | --- | --- |
+| [CT-01](ct-01-source.md) | Durable capture/framing, XML/JSON profiles, exact envelope/identity, provenance, clock and limits | CA-01, CA-02, CA-05 |
+| [CT-02](ct-02-transport.md) | Durable RabbitMQ publication, routing/confirms, checkpoints and backpressure | CA-03, CA-04 |
+| [CT-03](ct-03-indexing.md) | Deterministic fields/mappings, ID/index, per-item results, retries, SQLite quarantine and retention | CA-01 through CA-05, CA-11 |
+| [CT-04](ct-04-analysis.md) | Queries/timeline, small correlation rules, pattern groups and explainable outputs | CA-06 through CA-09 |
 
-| ID | Boundary | Minimum contract content | Acceptance |
-| --- | --- | --- | --- |
-| CT-01 | Source/file → adapter | XML/JSON format and framing, encoding, clock, provenance, stable occurrence identity, rotation, and replay | CA-01, CA-02, CA-05 |
-| CT-02 | Adapter → RabbitMQ | Versioned envelope, routing, persistence, durable confirmation, checkpoint, backpressure, and unroutable messages | CA-03, CA-04 |
-| CT-03 | RabbitMQ → processor → OpenSearch/quarantine | Validation, mappings, ID/index, partial bulk results, retries, acknowledgment, and durable disposition of permanent errors | CA-03, CA-04, CA-11 |
-| CT-04 | Stored events → analysis/visualization | Time-based queries, original references, correlation explanations, and pattern output | CA-06 through CA-09 |
+[Envelope JSON Schema](schemas/event-envelope-v1.schema.json) covers structure; [examples](examples/README.md) illustrate valid/invalid payloads and legitimate repeated occurrences. Cross-field identity, byte limits, digests, clock semantics, and runtime durability also require the normative prose. The schema does not replace those checks.
 
-Contracts describe logical boundaries; they do not require four services.
+Read [ADR-0002](../adr/0002-recovery-and-event-identity.md) and [ADR-0003](../adr/0003-tools-and-local-deployment.md) with these contracts. One codebase can implement the logical boundaries; four contracts do not require four services.
 
-## Candidate minimum model
+## Invariants and evolution
 
-| Concept | Semantics to agree on |
-| --- | --- |
-| `schema_version` | Envelope version; compatibility policy and rejection of unknown versions |
-| `event_id` | Identity of an original occurrence, stable across redelivery/restart/replay |
-| `source` | ONLINE/OFFLINE family, producer, environment, and durable source coordinates |
-| `event_time` | Time declared by the source, format/time zone, and handling of missing or invalid values |
-| `ingested_at` | Ingestion time, distinct from original time; not part of identity |
-| `severity`, `component`, `message` | Normalized fields with provenance and preservation of unmapped values |
-| `raw` or durable reference | Retrieval of the original record without reconstructing it from a template |
-| `correlation_keys` | IDs observed at the source or explicitly inferred, with their provenance |
-| Processing metadata | Parser version, replay/attempt, and diagnostics; separate from original identity |
+- Same original occurrence, same ID across continuous ingestion, restart, and replay.
+- Distinct occurrences remain distinct even if XML, message, and timestamp match.
+- Content hashes verify bytes; paths, timestamps, delivery tags, or new per-attempt IDs cannot define occurrence equivalence.
+- Preserve original raw input and clock/provenance; no invented source fields or causal claims.
+- Keep parser version and concrete index stable for one materialization/replay window. Explicit corrections create a versioned materialization, preserving original identities/evidence.
+- Reject unknown envelope properties/versions until a reviewed compatibility update. Keep supplied source formats separate from this project's capture framing.
 
-Field names are candidates. Lengths, types, required/optional fields, invalid timestamps, multiline XML, characters, and size limits must be fixed using real examples or documented fixtures before implementation.
+## Review outcome needed
 
-## Identity invariants
-
-- Same source event, same identity, even if attempt count or ingestion mode changes.
-- Distinct occurrences, distinct identities, even if every business field matches.
-- Ingestion time, delivery tag, redelivery flag, or a per-attempt UUID do not determine source identity.
-- A content hash may verify integrity but cannot distinguish identical occurrences.
-- Replay preserves file/generation identity and position; it does not automatically infer that two equal files represent the same events.
-- Identity is also preserved through quarantine and reprocessing. The target index and retention window are part of the idempotency contract.
-
-## Minimum analysis output
-
-A correlation must include event identifiers, rule and version, satisfied conditions, window, and explanation, stating whether the link is observed or inferred. A pattern must include its criterion/template, frequency, and original examples. Neither output changes or deletes source events.
-
-## Next-stage deliverables
-
-1. Approved field table, valid and invalid ONLINE/OFFLINE examples, and evolution policy.
-2. Envelope schema and error/disposition catalog, after scope approval.
-3. Exact identity/checkpoint, confirmation, and destination rules consistent with ADR-0002.
-4. Verifiable correlation and pattern examples implementing CA-08/CA-09.
+Accept or amend the exact profiles, identity/destination rules, SQLite/tooling proposal, unsupported-TAI behavior, resource/version candidates, and quantitative validation settings. Source integration, schema/example format checks, and runtime acceptance are separate evidence levels. No implementation authorization is inferred from this PR or its merge.
