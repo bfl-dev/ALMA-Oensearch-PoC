@@ -4,11 +4,11 @@
 
 ## Tentative parameters for review
 
-The values below are proposed local acceptance targets, not observed performance or requirements attributed to ALMA. Adjust them once resources and versions are known, before execution.
+The values below are proposed local acceptance targets, not observed performance or requirements attributed to ALMA. The temporary host and documentary candidate versions are now known; these values remain proposed until technical-design review. Record adjustments explicitly before execution, never retroactively to turn a failure into a pass.
 
 | Parameter | Initial proposal |
 | --- | --- |
-| Deterministic corpus | 1,000 ONLINE and 1,000 OFFLINE occurrences, with an independent manifest |
+| Deterministic corpus | 1,000 valid ONLINE and 1,000 valid OFFLINE occurrences, with an independent manifest; invalid fixtures counted separately |
 | Legitimate repetition | Include at least one ACS pair with identical XML and timestamps but distinct coordinates |
 | Historical data | Reprocess the corpus twice and include overlap with continuous reads |
 | Continuous flow | 10 events/s in aggregate for 2 minutes, in a scenario separate from corpus counting |
@@ -16,7 +16,10 @@ The values below are proposed local acceptance targets, not observed performance
 | Recovery | Backlog drained within 120 seconds after restoration, with declared resources |
 | Loss/duplication | Zero accepted valid events lost; zero additional copies per identity after convergence |
 | Search | Correct reproducible queries; record timings without promising an SLO yet |
-| Retention and replay | Explicitly define the supported window; do not test only against newly created indexes |
+| Retention and replay | Same concrete poc-events-v1 index and parser for a retained validation run, nominally 24 hours; explicit teardown only, no scheduled deletion/rollover |
+| Bounded work | Raw record 64 KiB; envelope 128 KiB; normalized document 256 KiB; prefetch/bulk at most 20; partial flush 250 ms |
+| Retry | 1, 2, 4, 8, then at most 10 s waits; initial network timeout 10 s; no drop-on-retry-exhaustion |
+| Analysis | One synthetic incident; 60 s same-operation window, optional 10 s same-stack window; recurring pattern plus singleton |
 
 A failing scenario still fails even if the global total matches because losses and duplicates cancel each other out.
 
@@ -27,6 +30,12 @@ Confirmed temporary host: i5-11300H, 16 GB total RAM, with a 10 GB project stora
 Before future runtime setup, record available host memory, actual free space on the image/cache and volume filesystems, selected versions, image/dependency footprint estimates, and remaining growth headroom. The 10 GB allowance covers the entire project's incremental footprint, not just OpenSearch documents. Defer installation if it cannot fit.
 
 During future runs, report total and peak memory/disk consumption, including images/build cache, source data, broker/quarantine state, indexes, and runtime logs. Verify bounded production/backpressure at capacity without deleting pending events. No capacity results exist yet. When moving to the main PC, repeat resource preflight and baseline measurements with its configuration recorded; retain the temporary-host results as a separate environment.
+
+## OpenSearch assessment and time semantics
+
+In addition to correctness, measure capture-to-search lag, indexed events/s over a declared interval, backlog size/drain time, exact query definitions/timings, peak process/host resources, and configuration difficulties. Report the dataset, warm/cold conditions, refresh/search-visibility policy and versions. Do not convert small synthetic measurements into production capacity claims or invent query SLOs.
+
+Time-based incident/correlation scenarios use explicitly UTC synthetic input. Include TAI/unknown/invalid-time records to verify preservation and visible exclusion from UTC windows; no conversion accuracy or real ACS clock compatibility is claimed. See [CT-01](contracts/ct-01-source.md) and [CT-03](contracts/ct-03-indexing.md).
 
 ## Oracle and evidence
 
@@ -46,7 +55,8 @@ Wait for the documented search-visibility condition and completion of retries be
 | Consumer failure and lost response | CA-03 | Failure point, redelivery, and final state |
 | OpenSearch outage | CA-04 | Backlog/timing and reconciliation after recovery |
 | RabbitMQ restart with pending messages | CA-04 | Durable state and post-restart results |
-| Partially failed bulk and invalid record | CA-11 | Per-event results and recoverable quarantine |
+| Partially failed bulk and invalid record | CA-11 | Per-event results, one committed quarantine entry per identified occurrence, and crash after commit/before ack |
+| ID collision and capacity | CA-03, CA-05, CA-11 | Different content under one ID pauses; full broker/quarantine preserves accepted source/backlog |
 | Incident with late events | CA-07, CA-08 | Timeline, explained rule, and negative case |
 | Message patterns | CA-09 | Groups, frequencies, examples, and limits |
 | Research and reproduction | CA-10, CA-12 | Report with sources and verified instructions |

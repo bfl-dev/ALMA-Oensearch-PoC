@@ -59,11 +59,9 @@ The goal is to recover events available in a persistent source or accepted by du
 
 The demo must cover abrupt producer/adapter and consumer termination, broker restart with storage retained, and temporary OpenSearch unavailability. Volume destruction, physical disk loss, source deletion, and an unlimited backlog are outside the approved guarantee and must be disclosed in the delivery.
 
-## Delivery before 3 November
+## Original delivery target and current status
 
-The target is interpreted as **2 November 2026, America/Santiago**. The deadline requires prioritization and measurement; it does not replace scope review or authorize implementation.
-
-Proposal: document on 1 November, close decisions and contracts at the start of the next work session, and implement/demonstrate on 2 November only if authorized and supported by the environment. If evidence is missing, publish the actual status and remaining work; do not label the demo complete.
+The original before-3-November target meant **2 November 2026, America/Santiago**. It has elapsed. As of this technical-design PR, there is no implemented demo or measured runtime acceptance evidence. No replacement completion date is invented; establish a realistic schedule from the reviewed design and resource preflight.
 
 ## Review record
 
@@ -109,3 +107,12 @@ Proposal: document on 1 November, close decisions and contracts at the start of 
 - The owner clarified that the current machine is temporary and a more powerful main PC will be used when available. Its specifications are pending; the current 16 GB RAM / 10 GB storage allowance is not a permanent project limit.
 - The owner accepted **Docker Compose** as the deployment approach. Exact versions, resource allocations, and configuration remain engineering details.
 - The documentation baseline may be merged with those details explicitly open. Merging this definition PR does not approve every candidate technical answer or authorize implementation; detailed decisions, contracts, planning, and implementation authorization follow in the agreed sequence.
+
+### Technical-design preparation
+
+- Date: **3 November 2026, America/Santiago**.
+- Owner instruction: **"go ahead"**, following the proposed DOC-03 investigation and technical-design/contracts PR sequence.
+- Effect: authorize research and a reviewable documentation proposal; no runtime implementation, ACS installation, container pulls, or agent execution inferred.
+- Research outcome: [DOC-03](research/acs-feasibility.md) completed early with current-source access/footprint verification blocked. Recommend the XML mock initially, retaining a real-export path for the main PC; this is not evidence of runtime ACS incompatibility.
+- Proposed next baseline: ADR-0002/0003, CT-01 through CT-04, candidate versions/resources, and acceptance parameters. See the [review guide](review/technical-design.md) and [task specifications](planning/implementation-tasks.md).
+- Status: research findings documented; technical decisions/contracts await review. Prior scope/C4/Compose approvals remain intact. Runtime acceptance is unexecuted.

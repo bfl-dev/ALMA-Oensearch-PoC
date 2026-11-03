@@ -1,0 +1,1 @@
+<Error TimeStamp="2026-11-03T12:00:00.000" SourceObject="mock.receiver" Host="poc-host" Process="mock-acs" LogId="17" StackId="stack-17"><![CDATA[receiver timeout after 10 ms — señal débil]]><Data Name="OperationId">op-17</Data><Data Name="RequestId">req-17</Data></Error>

@@ -50,3 +50,30 @@ Bulk operations are processed independently and results are reported per item. U
 ## Pending migration research
 
 The next stage will produce a brief matrix covering versions, APIs/clients, mappings, queries, dashboards, security/plugins, and data transfer, with official sources. No current ALMA versions have been verified and no migration results exist in this repository.
+
+## S-06 — ACS source review for DOC-03
+
+Reviewed on 3 November 2026: public [ACS community checkout](https://github.com/ACS-Community/ACS/tree/e7fd9ce9ac6502dfdf840e920150585867504362), pinned to the historical ACS-OCT2017 revision. Formatter, parser tests, loggingMI.xsd, XmlFileStoreLoggerImpl, and QueueFileHandler were read directly; exact links and findings are in [DOC-03](../research/acs-feasibility.md).
+
+This source proves historical code/schema availability, not today's ALMA release or an executed integration. Current GitLab/Confluence access was unsuccessful here. Historical namespace differences are documented rather than silently reconciled.
+
+## S-07 — Community container candidates
+
+Reviewed the [ACS Docker recipe](https://github.com/ACS-Community/ACS-Docker-Image/blob/9df3cbd1901147bfc929e2cf2d996060dc392e81/Dockerfile) at pinned revision 9df3cbd1901147bfc929e2cf2d996060dc392e81, its README, and the publisher's [acs](https://hub.docker.com/r/acscommunity/acs) / [acsdev](https://hub.docker.com/r/acscommunity/acsdev) pages. The recipe targets CentOS 7 / ACS 2020AUG; acsdev advertises stream9.2025apr.
+
+Displayed image sizes are unverified publisher-page metadata. No full image, build dependency set, digest, unpacked footprint, startup path, or known-message export was verified. No image was downloaded. See DOC-03 for the resulting mock-first recommendation and conditions to reopen real ACS.
+
+## S-08 — Tooling and persistence guidance
+
+Primary documentation reviewed on 3 November 2026:
+
+- RabbitMQ [queues](https://www.rabbitmq.com/docs/queues), [confirms](https://www.rabbitmq.com/docs/confirms), [overflow](https://www.rabbitmq.com/docs/maxlength), and [dead lettering](https://www.rabbitmq.com/docs/dlx): distinct persistence/confirmation stages, bounded queue behavior, and why a default overflow/DLX configuration is not the proposed no-silent-loss policy.
+- Elastic [RabbitMQ input](https://www.elastic.co/docs/reference/logstash/plugins/plugins-inputs-rabbitmq) and [persistent queues](https://www.elastic.co/docs/reference/logstash/persistent-queues): configuration and recovery boundaries for the tooling comparison. No performance comparison was run.
+- Python [sqlite3](https://docs.python.org/3.12/library/sqlite3.html) and SQLite [synchronous pragma](https://www.sqlite.org/pragma.html#pragma_synchronous): local transaction/durability mechanisms; not a claim that our future configuration has been tested.
+- OpenSearch [Bulk API](https://docs.opensearch.org/latest/api-reference/document-apis/bulk/), [index settings](https://docs.opensearch.org/latest/install-and-configure/configuring-opensearch/index-settings/), and [Docker deployment](https://docs.opensearch.org/latest/install-and-configure/install-opensearch/docker/): indexing, local deployment, and resource prerequisites. Latest documentation is dated reference evidence, not a version pin or footprint certification.
+
+## S-09 — Candidate releases and clients
+
+The primary release metadata linked in [ADR-0003](../adr/0003-tools-and-local-deployment.md) was reviewed on 3 November 2026 for OpenSearch/Dashboards 3.9.0, RabbitMQ 4.4.0, CPython 3.12.16, Pika 1.4.4, and opensearch-py 3.2.0. The [client matrix](https://github.com/opensearch-project/opensearch-py/blob/v3.2.0/COMPATIBILITY.md) supports the 3.x client/server pairing at a documented compatibility level.
+
+Release existence and the matrix do not establish image digest/availability, transitive dependency resolution, local installation, complete footprint, or integration behavior. Those are IMP-01 checks before the runtime baseline can be called reproducible.

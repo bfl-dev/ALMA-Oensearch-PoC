@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "event_id": "urn:alma-poc:event:v1:11111111-1111-4111-8111-111111111111:1",
+  "source": {
+    "family": "ONLINE",
+    "producer": "mock-acs",
+    "environment": "poc",
+    "generation_id": "11111111-1111-4111-8111-111111111111",
+    "sequence": 1,
+    "provenance": "synthetic",
+    "time_scale": "UTC"
+  },
+  "captured_at": "2026-11-03T12:00:01.000Z",
+  "raw": {
+    "format": "acs-xml",
+    "encoding": "base64",
+    "data": "PEVycm9yIFRpbWVTdGFtcD0iMjAyNi0xMS0wM1QxMjowMDowMC4wMDAiIFNvdXJjZU9iamVjdD0ibW9jay5yZWNlaXZlciIgSG9zdD0icG9jLWhvc3QiIFByb2Nlc3M9Im1vY2stYWNzIiBMb2dJZD0iMTciIFN0YWNrSWQ9InN0YWNrLTE3Ij48IVtDREFUQVtyZWNlaXZlciB0aW1lb3V0IGFmdGVyIDEwIG1zIOKAlCBzZcOxYWwgZMOpYmlsXV0+PERhdGEgTmFtZT0iT3BlcmF0aW9uSWQiPm9wLTE3PC9EYXRhPjxEYXRhIE5hbWU9IlJlcXVlc3RJZCI+cmVxLTE3PC9EYXRhPjwvRXJyb3I+Cg==",
+    "sha256": "8d5a4137a5072110ae8af857219848ed1127e85b9fe1e75d167f9738a7ccfd84"
+  }
+}
