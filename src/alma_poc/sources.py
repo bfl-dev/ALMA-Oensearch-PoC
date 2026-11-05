@@ -1,7 +1,9 @@
 """Explicitly synthetic ONLINE/OFFLINE sources and an independent fixture oracle."""
 
+import fcntl
 import hashlib
 import json
+import random
 import threading
 import time
 import uuid
@@ -13,13 +15,14 @@ from xml.sax.saxutils import escape, quoteattr
 from .capture import Capture, atomic_json, read_records
 from .errors import CapacityError, SystemFailure
 from .model import utc_now, wire_json
+from .scenarios import mixed_events
 
 BASE_TIME = datetime(2026, 11, 3, tzinfo=timezone.utc)
 
 
-def xml_record(message, *, timestamp, severity="Info", operation="op-17", request="req-17", stack="stack-17"):
+def xml_record(message, *, timestamp, severity="Info", operation="op-17", request="req-17", stack="stack-17", component="mock.receiver"):
     # Escaping is deterministic and safely supports arbitrary XML message text.
-    return (f'<{severity} TimeStamp={quoteattr(timestamp)} SourceObject="mock.receiver" Process="mock-acs" StackId={quoteattr(stack)}>'
+    return (f'<{severity} TimeStamp={quoteattr(timestamp)} SourceObject={quoteattr(component)} Process="mock-acs" StackId={quoteattr(stack)}>'
             f'{escape(message)}<Data Name="OperationId">{escape(operation)}</Data><Data Name="RequestId">{escape(request)}</Data></{severity}>\n').encode()
 
 
@@ -100,32 +103,67 @@ def generate_corpus(root, count=1000, invalid=1):
     return {"oracle": str(oracle_path), "valid": count * 2, "quarantined_expected": invalid * 2, "seed_id": oracle["seed_id"]}
 
 
-def stream(root, rate=10, seconds=120, family="both", oracle_path=None):
+def stream(root, rate=10, seconds=120, family="both", oracle_path=None, *,
+           scenario="normal", incident_rate=0.1, seed=None):
     if not 0 < rate <= 1000 or not 0 < seconds <= 3600 or not 1 <= int(rate * seconds) <= 20000:
         raise ValueError("rate/seconds exceed bounded source settings")
+    if family not in ("ONLINE", "OFFLINE", "both") or scenario not in ("normal", "mixed"):
+        raise ValueError("unsupported source family or scenario")
+    if not 0 <= incident_rate <= 1 or seed is not None and type(seed) is not int:
+        raise ValueError("incident rate must be 0..1 and seed must be an integer")
+    if scenario == "mixed" and (family != "both" or rate < 0.1):
+        raise ValueError("mixed scenarios require both families and at least 0.1 events/s")
     root = Path(root)
     root.mkdir(parents=True, exist_ok=True)
     families = ("ONLINE", "OFFLINE") if family == "both" else (family,)
     job = str(uuid.uuid4())
     generations = {f: str(uuid.uuid4()) for f in families}
     first_time = datetime.now(timezone.utc)
+    events, incidents = [], []
+    if scenario == "mixed":
+        if seed is None:
+            seed = random.SystemRandom().getrandbits(64)
+        events, incidents = mixed_events(int(rate * seconds), job, random.Random(seed), incident_rate)
     plan, sequences = [], {f: 0 for f in families}
     for number in range(int(rate * seconds)):
         current = families[number % len(families)]
-        sequences[current] += 1
         stamp = (first_time + timedelta(seconds=number / rate)).isoformat(timespec="milliseconds").replace("+00:00", "Z")
         operation, request, message = f"live-{job}-{number}", f"request-{job}-{number}", f"live sample {number}"
+        component = "mock.receiver" if current == "ONLINE" else "mock.api"
+        severity, stack = "INFO", f"stack-{job}-{number}"
+        if events:
+            event = events[number]
+            current, component, severity = event["family"], event["component"], event["severity"]
+            operation, request, message = event["operation_id"], event["request_id"], event["message"]
+            stack = event["stack_id"]
+        sequences[current] += 1
         if current == "ONLINE":
-            raw = xml_record(message, timestamp=stamp[:-1], operation=operation, request=request, stack=f"stack-{job}-{number}")
+            raw = xml_record(message, timestamp=stamp[:-1], severity=severity.title(),
+                             operation=operation, request=request, stack=stack, component=component)
         else:
-            raw = wire_json({"timestamp": stamp, "severity": "INFO", "component": "mock.api", "message": message, "operation_id": operation, "request_id": request})
-        expected = {"event_id": f"urn:alma-poc:event:v1:{generations[current]}:{sequences[current]}", "family": current, "generation_id": generations[current], "sequence": sequences[current], "raw_sha256": hashlib.sha256(raw).hexdigest(), "disposition": "indexed", "error_code": None, "event_time": stamp, "severity": "INFO", "component": "mock.receiver" if current == "ONLINE" else "mock.api", "message": message}
+            raw = wire_json({"timestamp": stamp, "severity": severity, "component": component, "message": message, "operation_id": operation, "request_id": request})
+        expected = {"event_id": f"urn:alma-poc:event:v1:{generations[current]}:{sequences[current]}", "family": current, "generation_id": generations[current], "sequence": sequences[current], "raw_sha256": hashlib.sha256(raw).hexdigest(), "disposition": "indexed", "error_code": None, "event_time": stamp, "severity": severity, "component": component, "message": message}
         plan.append((current, raw, expected))
+    for incident in incidents:
+        start = incident.pop("start_offset")
+        incident["event_ids"] = [item[2]["event_id"] for item in plan[start:start + incident["event_count"]]]
+        incident["seed_id"] = incident["event_ids"][1]
+    metadata = {"job": job, "generations": generations, "requested_rate": rate,
+                "requested_seconds": seconds, "intended_occurrences": len(plan),
+                "clock": "synthetic scheduled UTC", "scenario": scenario,
+                "incident_rate": incident_rate, "seed": seed, "incidents": incidents}
     if oracle_path:
-        oracle = json.loads(Path(oracle_path).read_text())
-        oracle["occurrences"].extend(item[2] for item in plan)
-        oracle.setdefault("streams", []).append({"job": job, "generations": generations, "requested_rate": rate, "requested_seconds": seconds, "intended_occurrences": len(plan), "clock": "synthetic scheduled UTC"})
-        atomic_json(oracle_path, oracle)
+        with (Path(oracle_path).parent / ".oracle.lock").open("a+b") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            oracle = json.loads(Path(oracle_path).read_text())
+            oracle["occurrences"].extend(item[2] for item in plan)
+            oracle.setdefault("streams", []).append(metadata)
+            atomic_json(oracle_path, oracle)
+    if scenario == "mixed":
+        print(json.dumps({"phase": "stream_plan", "job": job, "synthetic": True,
+                          "scenario": scenario, "seed": seed,
+                          "requested_rate": rate, "requested_seconds": seconds,
+                          "incidents": len(incidents), "incident_examples": incidents[:5]}), flush=True)
     captures = {}
     started = time.monotonic()
     try:
@@ -144,7 +182,10 @@ def stream(root, rate=10, seconds=120, family="both", oracle_path=None):
     finally:
         for capture in captures.values():
             capture.close()
-    return {"captured": len(plan), "job": job, "synthetic": True, "elapsed_seconds": time.monotonic() - started, "requested_rate": rate}
+    return {"captured": len(plan), "job": job, "synthetic": True,
+            "elapsed_seconds": time.monotonic() - started, "requested_rate": rate,
+            "scenario": scenario, "seed": seed,
+            "incidents": len(incidents), "incident_examples": incidents[:5]}
 
 
 def serve_api(root, host="0.0.0.0", port=8080):

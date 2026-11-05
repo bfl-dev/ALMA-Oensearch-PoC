@@ -42,3 +42,7 @@ The checks above describe the initial implementation session. During a later das
 - Browser automation was unavailable. After reimport and opening the tenant-qualified direct URL, the owner explicitly confirmed: **"Se muestran los gráficos"**. This is owner-reported rendering evidence; no automated screenshot or complete UI acceptance is claimed.
 
 The working tree is based on implementation revision `8858de996a492a70a4ba38906d725b056d15147f` plus this repair. Remaining CA-01 through CA-12 gates are unchanged.
+
+## Owner-reported acceptance and live view
+
+PR #11 merged as `c7b41d7`. The owner subsequently reported `passed: true`, `error: null` from the live acceptance runner and confirmed the dashboard/live view works. Reported budget accounting was 8,347,889,432 of 10,000,000,000 bytes including a 2 GB reserve. Full host reports and their revision/configuration have yet to be reviewed. Current M1 approval gates are tracked in the [acceptance checklist](m1-review.md).

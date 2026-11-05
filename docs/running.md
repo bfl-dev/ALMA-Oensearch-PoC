@@ -64,6 +64,41 @@ Inspect quarantine:
 docker compose --env-file .env --env-file .env.images run --rm tools quarantine --state /data/worker/quarantine.sqlite --output -
 ```
 
+## Live log generation
+
+After building the updated application image, run:
+
+```sh
+make live
+make live RATE=10 DURATION=300 INCIDENT_RATE=0.2 SEED=17
+make live SCENARIO=normal
+```
+
+Run one command at a time. The default is 10 events/s for 120 seconds, mixed scenarios, and a 10% probability of a cascade per operation when enough positions remain. The commands start the stack, create/reuse the fixed corpus and extend its independent oracle before live capture. Existing generation identities remain stable. A different `COMPOSE_PROJECT_NAME` selects a different project; preserve the same setting for all related commands and keep only one stack bound to the chosen ports.
+
+Mixed mode randomly chooses receiver timeout, device unavailable or connection reset. Each complete seven-event cascade includes request acceptance, upstream error, processor retry/exhaustion, downstream operation failure, receiver reconnection and successful recovery. Events share an operation/request ID across ONLINE and OFFLINE and span `mock.api`, `mock.receiver`, `mock.processor` and `mock.pipeline`. Normal operations and final background events fill the rest of the exact requested event count. A cascade starts only when all seven slots fit. These are simulated dependencies defined by the scenario.
+
+The generator prints its seed and up to five incident examples before capturing. Copy an operation ID into a Dashboards filter such as `correlation_keys.operation_id: "live-..."`, or use an example's `seed_id` with `analyze --seed`. Set the time range to Last 15 minutes and enable refresh. `SEED` repeats the scenario choices; each invocation gets new occurrence IDs and current scheduled UTC timestamps. The rate applies to total events across both families. Mixed mode requires both families and at least 0.1 events/s to fit a cascade inside the 60 s correlation window. Existing `stream` calls retain normal-mode defaults, including the acceptance runner.
+
+Generation stops at `DURATION` or the 20,000-event / one-hour bounds. Press Ctrl+C to interrupt the foreground command. From a second terminal, stop its named source container with:
+
+```sh
+make live-stop
+make verify
+```
+
+Use the same `COMPOSE_PROJECT_NAME` for stopping and verification. Accepted captures remain available to the adapter/worker. An interrupted or capacity-blocked plan retains the oracle's intended events, so verification reports `unproduced_expected` for events never captured. Review that separately from `missing_accepted_valid`. Completed streams should reconcile after the queue drains. The source budget remains 100 MiB and analysis remains bounded to 20,000 total indexed events across retained runs.
+
+Update/rebuild example for a new checkout revision:
+
+```sh
+export SOURCE_REVISION="$(git rev-parse HEAD)"
+make build
+make live
+```
+
+For current M1 status and the evidence still needed, see the [acceptance checklist](evidence/m1-review.md).
+
 ## Persistence and limitations
 
 `make down` stops containers and retains named volumes. Source, checkpoints, quarantine, broker and index survive restart. No reset/prune command is supplied. Volume deletion is a separate destructive action outside recovery guarantees. No automatic rollover/deletion occurs during the retained run.

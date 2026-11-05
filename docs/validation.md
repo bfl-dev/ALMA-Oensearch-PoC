@@ -1,12 +1,12 @@
 # Validation and demonstration
 
-**Status:** proposed plan. No software tests have been executed and these capabilities have not been measured.
+**Status:** accepted validation baseline. PR #11 is merged; the owner reported a passing live runner, passing storage budget, and working dashboard/live view. Full artifacts and remaining boundary/performance evidence await review. See the [M1 acceptance checklist](evidence/m1-review.md).
 
-## Tentative parameters for review
+## Accepted parameters
 
-The values below are proposed local acceptance targets, not observed performance or requirements attributed to ALMA. The temporary host and documentary candidate versions are now known; these values remain proposed until technical-design review. Record adjustments explicitly before execution, never retroactively to turn a failure into a pass.
+The values below were accepted at technical-design revision `d5d82cf`. Record any future adjustments before execution and preserve the result for each tested configuration.
 
-| Parameter | Initial proposal |
+| Parameter | Accepted baseline |
 | --- | --- |
 | Deterministic corpus | 1,000 valid ONLINE and 1,000 valid OFFLINE occurrences, with an independent manifest; invalid fixtures counted separately |
 | Legitimate repetition | Include at least one ACS pair with identical XML and timestamps but distinct coordinates |
@@ -29,7 +29,7 @@ Confirmed temporary host: i5-11300H, 16 GB total RAM, with a 10 GB project stora
 
 Before future runtime setup, record available host memory, actual free space on the image/cache and volume filesystems, selected versions, image/dependency footprint estimates, and remaining growth headroom. The 10 GB allowance covers the entire project's incremental footprint, not just OpenSearch documents. Defer installation if it cannot fit.
 
-During future runs, report total and peak memory/disk consumption, including images/build cache, source data, broker/quarantine state, indexes, and runtime logs. Verify bounded production/backpressure at capacity without deleting pending events. No capacity results exist yet. When moving to the main PC, repeat resource preflight and baseline measurements with its configuration recorded; retain the temporary-host results as a separate environment.
+During future runs, report total and peak memory/disk consumption, including images/build cache, source data, broker/quarantine state, indexes, and runtime logs. Verify bounded production/backpressure at capacity without deleting pending events. Live capacity boundary results remain pending. When moving to the main PC, repeat resource preflight and baseline measurements with its configuration recorded; retain the temporary-host results as a separate environment.
 
 ## OpenSearch assessment and time semantics
 
@@ -61,7 +61,7 @@ Wait for the documented search-visibility condition and completion of retries be
 | Message patterns | CA-09 | Groups, frequencies, examples, and limits |
 | Research and reproduction | CA-10, CA-12 | Report with sources and verified instructions |
 
-Each run must identify the commit, versions, hardware, configuration and data, command/procedure used, expected/actual result, and evidence links. Scripts and tests will be written when implementation is authorized.
+Each run must identify the commit, versions, hardware, configuration and data, command/procedure used, expected/actual result, and evidence links. Scripts and core tests are implemented. Link each reported live outcome to its full host artifacts before closing the criterion.
 
 ## Proposed presentation script
 
