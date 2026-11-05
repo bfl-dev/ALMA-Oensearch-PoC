@@ -1,6 +1,6 @@
 # Formal project definition
 
-**Status:** project definition approved on 1 November 2026 (America/Santiago). **Approval owner:** project owner. **Architecture:** conceptual C4 approved on 3 November 2026 (America/Santiago). **Technical design:** accepted at revision `d5d82cf`. **Implementation:** initial code under review; live acceptance pending. The dated approval entries below preserve the decision history.
+**Status:** project definition approved on 1 November 2026 (America/Santiago). **Approval owner:** project owner. **Architecture:** conceptual C4 approved on 3 November 2026 (America/Santiago). **Technical design:** accepted at revision `d5d82cf`. **M1:** approved by the owner on 5 November 2026, with evidence levels and a measurement waiver recorded in the [acceptance record](evidence/m1-review.md). The dated approval entries below preserve the decision history.
 
 ## Purpose
 
@@ -61,7 +61,7 @@ The demo must cover abrupt producer/adapter and consumer termination, broker res
 
 ## Original delivery target and current status
 
-The original before-3-November target meant **2 November 2026, America/Santiago**. It has elapsed. The initial implementation is now under review; measured runtime acceptance evidence remains pending. No replacement completion date is invented; establish a realistic schedule from the reviewed design and resource preflight.
+The original before-3-November target meant **2 November 2026, America/Santiago**. It has elapsed. M1 was accepted on 5 November 2026 using the owner-approved acceptance report, reported live boundary results and working UI, with peak-resource/throughput/lag measurements waived. The original target remains recorded as elapsed.
 
 ## Review record
 
@@ -126,3 +126,10 @@ This table preserves the pre-acceptance design review. The later technical-desig
 - Accepted baseline: PR #2 head `d5d82cf5b6490efbeebf691e8ec9630407c05e5f`, merged as `6a7804cdbe12041f8f38770ed9247591664d68ea`.
 - Scope: ADR-0002/0003, CT-01 through CT-04, source admission/fallback, version/resource candidates and acceptance parameters; implement the essential demo and tests.
 - Runtime results remain evidence to obtain. Current execution cannot access the Docker daemon and shell network; neither restriction changes the accepted guarantees.
+
+### M1 acceptance
+
+- Date: **5 November 2026, America/Santiago**.
+- Owner instruction: **"ok can we approve m1 so?"**.
+- Accepted baseline: PR #12 head `61892f24c7abdcba0c76de14e664b0653f0ca33b`, following PR #11 and the passing live boundary run on `67b69f4`.
+- Effect: M1 accepted with the evidence and waived measurements detailed in the [M1 record](evidence/m1-review.md#m1-approval--5-november-2026). M2 requires separately agreed scope.

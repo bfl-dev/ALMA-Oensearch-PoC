@@ -31,6 +31,10 @@ def parser():
     live.add_argument("--seconds", type=float, default=120)
     live.add_argument("--family", choices=("ONLINE", "OFFLINE", "both"), default="both")
     live.add_argument("--oracle", help="extend an existing acceptance oracle before generating the scheduled stream")
+    live.add_argument("--scenario", choices=("normal", "mixed"), default="normal")
+    live.add_argument("--incident-rate", type=float, default=0.1,
+                      help="probability of a cascade per operation in mixed mode (0..1)")
+    live.add_argument("--seed", type=int, help="repeat the scenario choices while allocating new event identities")
     api = commands.add_parser("api", help="synthetic OFFLINE API; captures before returning 202")
     api.add_argument("--root", default="data/corpus")
     api.add_argument("--host", default="0.0.0.0")
@@ -74,7 +78,8 @@ def run(args):
     if args.command == "generate":
         return generate_corpus(args.root, args.count, args.invalid)
     if args.command == "stream":
-        return stream(args.root, args.rate, args.seconds, args.family, args.oracle)
+        return stream(args.root, args.rate, args.seconds, args.family, args.oracle,
+                      scenario=args.scenario, incident_rate=args.incident_rate, seed=args.seed)
     if args.command == "api":
         serve_api(args.root, args.host, args.port)
         return {"stopped": True}

@@ -1,6 +1,6 @@
 # Documentation index
 
-Status as of 3 November 2026: **technical design accepted; initial implementation under review; live acceptance pending**. Start with the [runbook](running.md) and [evidence record](evidence/implementation.md).
+Status as of 5 November 2026: **M1 approved by the owner with recorded evidence levels and a measurement waiver**. See the [M1 approval](evidence/m1-review.md). Start with the [runbook](running.md) and [evidence record](evidence/implementation.md).
 
 ## Reading order
 
@@ -30,4 +30,4 @@ Identifiers: `D-xx` owner decisions, `RF-xx` functional requirements, `RC-xx` qu
 
 ## Definition gate
 
-M0 is accepted at revision `d5d82cf`; owner explicitly authorized implementation. See the [acceptance record](project-definition.md#technical-design-acceptance-and-implementation-authorization). Runtime M1 acceptance is separate and remains pending. [Planning](planning/README.md) links the implementation work; [migration research](research/elasticsearch-migration.md) is documentary only.
+M0 is accepted at revision `d5d82cf`; owner explicitly authorized implementation. See the [acceptance record](project-definition.md#technical-design-acceptance-and-implementation-authorization). M1 is accepted as recorded in the [approval and waiver](evidence/m1-review.md). [Planning](planning/README.md) links the implementation work; [migration research](research/elasticsearch-migration.md) is documentary only.

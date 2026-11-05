@@ -1,6 +1,12 @@
 COMPOSE = docker compose --env-file .env --env-file .env.images
+RATE ?= 10
+DURATION ?= 120
+SCENARIO ?= mixed
+INCIDENT_RATE ?= 0.1
+SEED ?=
+LIVE_CONTAINER = $(if $(COMPOSE_PROJECT_NAME),$(COMPOSE_PROJECT_NAME),alma-poc)-live-source
 
-.PHONY: test config preflight build up corpus replay verify analyze queries down schema
+.PHONY: test config preflight build up corpus replay verify analyze queries down schema live live-stop boundary-checks
 test:
 	PYTHONPATH=src python3 -m unittest discover -s tests -v
 config:
@@ -14,6 +20,14 @@ up:
 	$(COMPOSE) up -d opensearch rabbitmq dashboards setup adapter worker
 corpus:
 	$(COMPOSE) run --rm tools generate --root /data/corpus
+live:
+	$(MAKE) up
+	$(MAKE) corpus
+	$(COMPOSE) run --rm --name "$(LIVE_CONTAINER)" tools stream --root /data/corpus --oracle /data/corpus/oracle.json --rate "$(RATE)" --seconds "$(DURATION)" --scenario "$(SCENARIO)" --incident-rate "$(INCIDENT_RATE)" $(if $(SEED),--seed "$(SEED)")
+live-stop:
+	docker stop "$(LIVE_CONTAINER)"
+boundary-checks:
+	python3 scripts/boundary_checks.py
 replay:
 	$(COMPOSE) run --rm tools adapter --root /data/corpus --state /data/adapter/checkpoints.sqlite --once --replay "manual-$$(date +%s)"
 verify:

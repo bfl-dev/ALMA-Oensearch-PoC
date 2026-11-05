@@ -34,6 +34,30 @@ The runner generates 1,000 valid occurrences per family plus invalid fixtures ag
 
 Reports include `artifacts/acceptance.json`, `last-reconciliation.json`, `analysis.json`, redacted container logs and preflight/budget results. Check exact identity/multiplicity/raw content/disposition, not equal totals alone. Record runtime versions, immutable images, dependency lock hash and source revision. Actual peak sampling, full throughput/lag evaluation, live capacity/collision negative tests, and UI evidence remain required. The optional manual GitHub `live` workflow runs in a separate hosted environment; it cannot establish laptop resource fit.
 
+## Live boundary checks
+
+The owner has approved the main acceptance report. Run the remaining collision and capacity cases from the updated PR #12 branch after rebuilding the image:
+
+```sh
+git switch feature/live-cascade-logging
+git pull --ff-only origin feature/live-cascade-logging
+export SOURCE_REVISION="$(git rev-parse HEAD)"
+make build
+make boundary-checks
+```
+
+The boundary stack requires 5.125 GiB available memory. If the current demo consumes that headroom, stop its Compose project first with `make down` using its actual `COMPOSE_PROJECT_NAME`. Named volumes are retained. The runner selects its own fresh `alma-boundary-…` project and automatic loopback ports, starts OpenSearch/RabbitMQ only, and checks the existing project storage budget before and after the run.
+
+| Case | Expected proof |
+| --- | --- |
+| Identity collision | A valid envelope with changed raw content under an existing ID raises `E_IDENTITY_COLLISION`, leaves the original indexed document intact, and retains the unacknowledged delivery in RabbitMQ. |
+| Broker capacity | A test queue fits one envelope. Publishing the second is negatively confirmed, the checkpoint stays at sequence 1, and both source records remain. After consuming the accepted message, retry confirms the original second event and advances to sequence 2. |
+| Quarantine capacity | A test-local SQLite logical budget fits one invalid event. A second raises `E_CAPACITY` and stays unacknowledged. Reopen the same database with more capacity, retry, and verify both raw envelopes are retained before the queue drains. |
+
+The small test limits exercise the production declaration, publication, checkpoint and settlement code paths. Standard runtime limits remain 64 MiB. These controlled logical-capacity tests do not simulate a physical disk failure. The injected errors are expected assertions inside a passing test.
+
+The final JSON prints `passed`, `project` and the unique `artifacts/boundaries/<run-id>/report.json` path. Inspect its three `cases` results and retained budget/version/configuration evidence. Each run has a new report directory, preserving the approved `acceptance.json` and budget report. The runner stops its own containers at the end and retains their volumes, including on failure. No UI stack is started. The new runner still needs a live host result before the M1 boundary gate can close.
+
 ## Interactive demo
 
 ```sh
@@ -63,6 +87,41 @@ Inspect quarantine:
 ```sh
 docker compose --env-file .env --env-file .env.images run --rm tools quarantine --state /data/worker/quarantine.sqlite --output -
 ```
+
+## Live log generation
+
+After building the updated application image, run:
+
+```sh
+make live
+make live RATE=10 DURATION=300 INCIDENT_RATE=0.2 SEED=17
+make live SCENARIO=normal
+```
+
+Run one command at a time. The default is 10 events/s for 120 seconds, mixed scenarios, and a 10% probability of a cascade per operation when enough positions remain. The commands start the stack, create/reuse the fixed corpus and extend its independent oracle before live capture. Existing generation identities remain stable. A different `COMPOSE_PROJECT_NAME` selects a different project; preserve the same setting for all related commands and keep only one stack bound to the chosen ports.
+
+Mixed mode randomly chooses receiver timeout, device unavailable or connection reset. Each complete seven-event cascade includes request acceptance, upstream error, processor retry/exhaustion, downstream operation failure, receiver reconnection and successful recovery. Events share an operation/request ID across ONLINE and OFFLINE and span `mock.api`, `mock.receiver`, `mock.processor` and `mock.pipeline`. Normal operations and final background events fill the rest of the exact requested event count. A cascade starts only when all seven slots fit. These are simulated dependencies defined by the scenario.
+
+The generator prints its seed and up to five incident examples before capturing. Copy an operation ID into a Dashboards filter such as `correlation_keys.operation_id: "live-..."`, or use an example's `seed_id` with `analyze --seed`. Set the time range to Last 15 minutes and enable refresh. `SEED` repeats the scenario choices; each invocation gets new occurrence IDs and current scheduled UTC timestamps. The rate applies to total events across both families. Mixed mode requires both families and at least 0.1 events/s to fit a cascade inside the 60 s correlation window. Existing `stream` calls retain normal-mode defaults, including the acceptance runner.
+
+Generation stops at `DURATION` or the 20,000-event / one-hour bounds. Press Ctrl+C to interrupt the foreground command. From a second terminal, stop its named source container with:
+
+```sh
+make live-stop
+make verify
+```
+
+Use the same `COMPOSE_PROJECT_NAME` for stopping and verification. Accepted captures remain available to the adapter/worker. An interrupted or capacity-blocked plan retains the oracle's intended events, so verification reports `unproduced_expected` for events never captured. Review that separately from `missing_accepted_valid`. Completed streams should reconcile after the queue drains. The source budget remains 100 MiB and analysis remains bounded to 20,000 total indexed events across retained runs.
+
+Update/rebuild example for a new checkout revision:
+
+```sh
+export SOURCE_REVISION="$(git rev-parse HEAD)"
+make build
+make live
+```
+
+For current M1 status and the evidence still needed, see the [acceptance checklist](evidence/m1-review.md).
 
 ## Persistence and limitations
 
