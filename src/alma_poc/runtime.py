@@ -164,7 +164,9 @@ class RequestTooLarge(SystemFailure):
     pass
 
 
-def rabbit_connection():
+def rabbit_connection(*, queue_name=QUEUE, max_queue_bytes=64 * 1024 * 1024):
+    if type(max_queue_bytes) is not int or not 0 < max_queue_bytes <= 64 * 1024 * 1024:
+        raise ValueError("queue limit must be a positive integer at most 64 MiB")
     try:
         import pika
     except ImportError:
@@ -176,7 +178,7 @@ def rabbit_connection():
     parameters.stack_timeout = 15
     connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
-    channel.queue_declare(queue=QUEUE, durable=True, exclusive=False, auto_delete=False, arguments={"x-queue-type": "classic", "x-max-length-bytes": 64 * 1024 * 1024, "x-overflow": "reject-publish"})
+    channel.queue_declare(queue=queue_name, durable=True, exclusive=False, auto_delete=False, arguments={"x-queue-type": "classic", "x-max-length-bytes": max_queue_bytes, "x-overflow": "reject-publish"})
     channel.basic_qos(prefetch_count=20)
     return pika, connection, channel
 

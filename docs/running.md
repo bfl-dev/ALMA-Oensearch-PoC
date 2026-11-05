@@ -34,6 +34,30 @@ The runner generates 1,000 valid occurrences per family plus invalid fixtures ag
 
 Reports include `artifacts/acceptance.json`, `last-reconciliation.json`, `analysis.json`, redacted container logs and preflight/budget results. Check exact identity/multiplicity/raw content/disposition, not equal totals alone. Record runtime versions, immutable images, dependency lock hash and source revision. Actual peak sampling, full throughput/lag evaluation, live capacity/collision negative tests, and UI evidence remain required. The optional manual GitHub `live` workflow runs in a separate hosted environment; it cannot establish laptop resource fit.
 
+## Live boundary checks
+
+The owner has approved the main acceptance report. Run the remaining collision and capacity cases from the updated PR #12 branch after rebuilding the image:
+
+```sh
+git switch feature/live-cascade-logging
+git pull --ff-only origin feature/live-cascade-logging
+export SOURCE_REVISION="$(git rev-parse HEAD)"
+make build
+make boundary-checks
+```
+
+The boundary stack requires 5.125 GiB available memory. If the current demo consumes that headroom, stop its Compose project first with `make down` using its actual `COMPOSE_PROJECT_NAME`. Named volumes are retained. The runner selects its own fresh `alma-boundary-…` project and automatic loopback ports, starts OpenSearch/RabbitMQ only, and checks the existing project storage budget before and after the run.
+
+| Case | Expected proof |
+| --- | --- |
+| Identity collision | A valid envelope with changed raw content under an existing ID raises `E_IDENTITY_COLLISION`, leaves the original indexed document intact, and retains the unacknowledged delivery in RabbitMQ. |
+| Broker capacity | A test queue fits one envelope. Publishing the second is negatively confirmed, the checkpoint stays at sequence 1, and both source records remain. After consuming the accepted message, retry confirms the original second event and advances to sequence 2. |
+| Quarantine capacity | A test-local SQLite logical budget fits one invalid event. A second raises `E_CAPACITY` and stays unacknowledged. Reopen the same database with more capacity, retry, and verify both raw envelopes are retained before the queue drains. |
+
+The small test limits exercise the production declaration, publication, checkpoint and settlement code paths. Standard runtime limits remain 64 MiB. These controlled logical-capacity tests do not simulate a physical disk failure. The injected errors are expected assertions inside a passing test.
+
+The final JSON prints `passed`, `project` and the unique `artifacts/boundaries/<run-id>/report.json` path. Inspect its three `cases` results and retained budget/version/configuration evidence. Each run has a new report directory, preserving the approved `acceptance.json` and budget report. The runner stops its own containers at the end and retains their volumes, including on failure. No UI stack is started. The new runner still needs a live host result before the M1 boundary gate can close.
+
 ## Interactive demo
 
 ```sh
