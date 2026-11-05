@@ -1,6 +1,6 @@
 # Validation and demonstration
 
-**Status:** accepted validation baseline. PR #11 is merged; the owner reported a passing live runner, passing storage budget, and working dashboard/live view. The owner subsequently reported passing live boundary checks and waived peak-resource, throughput and capture-to-search lag measurements for M1. Remaining evidence review is tracked below. See the [M1 acceptance checklist](evidence/m1-review.md).
+**Status:** accepted validation baseline. PR #11 is merged; the owner reported a passing live runner, passing storage budget, and working dashboard/live view. The owner subsequently reported passing live boundary checks and waived peak-resource, throughput and capture-to-search lag measurements for M1. Remaining evidence review is tracked below. M1 was accepted by the owner on 5 November 2026 with the [recorded evidence and waiver](evidence/m1-review.md).
 
 ## Accepted parameters
 

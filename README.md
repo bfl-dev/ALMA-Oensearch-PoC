@@ -2,11 +2,11 @@
 
 Personal project to demonstrate reliable log ingestion and incident investigation with OpenSearch, in preparation for an ALMA 2027 internship application.
 
-**Status: technical design accepted; initial implementation available for review. Core tests and Compose configuration checks are available; live Docker acceptance and resource fit remain pending.**
+**Status: M1 approved by the owner on 5 November 2026. Live acceptance and boundary runs passed on the owner's PC; dashboard/live view confirmed. Peak-resource, throughput and capture-to-search lag measurements were waived.**
 
 This is an independent learning project. Its architectural inspiration is a historical ALMA publication; it does not describe or claim access to ALMA's current infrastructure.
 
-## Implemented for review
+## M1 demonstration
 
 - Ingest ACS ONLINE XML logs and simulated OFFLINE web/API logs through persistent RabbitMQ messaging.
 - Combine continuous ingestion and historical replay while preserving event identity.
@@ -14,7 +14,7 @@ This is an independent learning project. Its architectural inspiration is a hist
 - Search and visualize logs, reconstruct an incident, explain automatic correlations, and discover recurring message patterns.
 - Document Elasticsearch-to-OpenSearch migration considerations without performing a migration.
 
-The Python implementation includes synthetic sources, durable capture, confirmed publication, replay, deterministic indexing/quarantine, queries, saved dashboard objects and analysis. These capabilities still require live RabbitMQ/OpenSearch validation. No real ACS integration is claimed. See the [runbook](docs/running.md) and [evidence record](docs/evidence/implementation.md).
+The Python implementation includes synthetic sources, durable capture, confirmed publication, replay, deterministic indexing/quarantine, queries, saved dashboard objects and analysis. The owner approved the live acceptance report and reported passing collision/capacity checks. Sources are synthetic; real ACS follow-up is separately scoped. See the [runbook](docs/running.md) and [evidence record](docs/evidence/implementation.md).
 
 ## Documentation
 
@@ -46,11 +46,11 @@ make build
 python3 scripts/acceptance.py
 ```
 
-The acceptance runner needs an empty isolated Compose project. Read the [runbook](docs/running.md) first. Preflight generates private credentials, digest references and a hashed dependency lock; no package/image substitution occurs. The live stack has not been started from this restricted session.
+The acceptance runner needs an empty isolated Compose project. Read the [runbook](docs/running.md) first. Preflight generates private credentials, digest references and a hashed dependency lock; no package/image substitution occurs. The live runs were performed on the owner's PC.
 
 For interactive use after setup: `make up`, `make corpus`, `make verify`, `make queries`, `make analyze`, then `python3 scripts/import_dashboards.py`. Dashboards binds to <http://127.0.0.1:5601>. `make down` retains volumes. Do not publish the generated `.env`.
 
-The original 2 November 2026 target elapsed. M1 remains open until runtime evidence supports the acceptance criteria. The i5-11300H/16 GB host is temporary; a future main PC requires new preflight measurements. See the [documentary migration assessment](docs/research/elasticsearch-migration.md).
+The original 2 November 2026 target elapsed. M1 was accepted on 5 November with the [recorded evidence and measurement waiver](docs/evidence/m1-review.md). The i5-11300H/16 GB host is temporary; a future main PC requires new preflight measurements. See the [documentary migration assessment](docs/research/elasticsearch-migration.md).
 
 ## License
 

@@ -46,3 +46,7 @@ The working tree is based on implementation revision `8858de996a492a70a4ba38906d
 ## Owner-reported acceptance and live view
 
 PR #11 merged as `c7b41d7`. The owner subsequently reported `passed: true`, `error: null` from the live acceptance runner and confirmed the dashboard/live view works. Reported budget accounting was 8,347,889,432 of 10,000,000,000 bytes including a 2 GB reserve. Full host reports and their revision/configuration have yet to be reviewed. Current M1 approval gates are tracked in the [acceptance checklist](m1-review.md).
+
+## M1 accepted — 5 November 2026
+
+The owner accepted M1 against PR #12 head `61892f2`, following the approved acceptance report, reported passing boundary checks on `67b69f4`, working UI/live view and documentary migration assessment. Peak-resource, throughput and capture-to-search lag measurements were explicitly waived. Current acceptance and evidence limits are in the [M1 approval record](m1-review.md#m1-approval--5-november-2026). Historical initial-session results above retain their original evidence dates.
