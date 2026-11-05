@@ -32,7 +32,11 @@ def main():
             result = json.load(response)
     except urllib.error.HTTPError as exc:
         raise SystemExit(f"Dashboards import failed with HTTP {exc.code}; no object import is claimed") from None
-    print(json.dumps({"success": result.get("success", False), "imported": result.get("successCount", 0), "errors": result.get("errors", [])}))
+    output = {"success": result.get("success", False), "imported": result.get("successCount", 0), "errors": result.get("errors", [])}
+    if output["success"]:
+        output["tenant"] = "global"
+        output["dashboard_url"] = args.url.rstrip("/") + "/app/dashboards?security_tenant=global#/view/poc-overview"
+    print(json.dumps(output))
     return 0 if result.get("success") else 1
 
 

@@ -29,3 +29,16 @@ Follow the [runbook](../running.md) in a Docker-capable terminal. Preserve immut
 No vetted ACS corpus was available. Release-specific schema/IDL, byte/framing fidelity, clock evidence and real logging-client capture remain a separate main-PC experiment under CT-01. Migration is documentary and does not assume ALMA's source version.
 
 M0 is accepted. M1 remains open pending evidence for CA-01 through CA-12. The 2 November target elapsed; no backdated delivery or replacement deadline is claimed.
+
+## Dashboard repair — 4 November 2026 (America/Santiago)
+
+The checks above describe the initial implementation session. During a later dashboard diagnosis, an existing local Compose stack was accessible through authorized Docker/localhost commands. OpenSearch Dashboards reported version `3.9.0` and green status. This observation does not establish full runtime acceptance or resource fit.
+
+- The imported dashboard panels lacked `version`. Server logs recorded `migrations730` failing with `TypeError: Cannot read properties of null (reading 'version')`, although the import API had reported success. Executing the installed migration against in-memory copies reproduced the original warning; panels with `version: "3.9.0"` produced no migration warnings.
+- Added the panel versions and a regression check for version format and saved-object references. Local unittest result: 49 tests run, 48 passed, one explicit dependency skip.
+- The objects were present in the Global security tenant; an API request without an explicit tenant returned no dashboards. The importer now prints a tenant-qualified direct URL, and the runbook documents it.
+- Exported the existing objects to ignored `artifacts/dashboards-before-panel-version-fix.ndjson`, then reimported all five objects successfully. Readback verified their references and corrected panel definitions. No source events, index documents, or volumes were changed by the repair.
+- A read-only query within the saved dashboard time range returned exactly 2,000 events: 1,000 ONLINE and 1,000 OFFLINE. The histogram aggregation also counted 2,000. The diagnostic report is in ignored `artifacts/dashboard-repair.json`.
+- Browser automation was unavailable. After reimport and opening the tenant-qualified direct URL, the owner explicitly confirmed: **"Se muestran los gráficos"**. This is owner-reported rendering evidence; no automated screenshot or complete UI acceptance is claimed.
+
+The working tree is based on implementation revision `8858de996a492a70a4ba38906d725b056d15147f` plus this repair. Remaining CA-01 through CA-12 gates are unchanged.

@@ -17,6 +17,29 @@ from alma_poc.verification import reconcile
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class DashboardContractTests(unittest.TestCase):
+    def test_dashboard_panels_have_versions_and_resolvable_saved_objects(self):
+        objects = {
+            (obj["type"], obj["id"]): obj
+            for obj in map(json.loads, (ROOT / "deployment/dashboards.ndjson").read_text().splitlines())
+        }
+        dashboard = objects[("dashboard", "poc-overview")]
+        references = {ref["name"]: ref for ref in dashboard["references"]}
+        panels = json.loads(dashboard["attributes"]["panelsJSON"])
+        self.assertTrue(panels)
+        for panel in panels:
+            with self.subTest(panel=panel["panelIndex"]):
+                # The installed 3.9.0 migration dereferences semver.coerce(version).
+                # Without this field import can report success after migration fails.
+                self.assertRegex(panel["version"], r"^\d+\.\d+\.\d+$")
+                reference = references[panel["panelRefName"]]
+                self.assertIn((reference["type"], reference["id"]), objects)
+                self.assertEqual(panel["gridData"]["i"], panel["panelIndex"])
+        for obj in objects.values():
+            for reference in obj["references"]:
+                self.assertIn((reference["type"], reference["id"]), objects)
+
+
 class SearchProtocolTests(unittest.TestCase):
     def setUp(self):
         self.sink = SearchSink.__new__(SearchSink)

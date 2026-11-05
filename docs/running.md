@@ -45,7 +45,9 @@ make analyze
 python3 scripts/import_dashboards.py
 ```
 
-Ingestion is asynchronous; verify after the queue drains. Verification exits 1 for mismatches and exports `artifacts/reconciliation.json`; queries/analysis also export JSON. Dashboards is at <http://127.0.0.1:5601>. Import/render compatibility is unverified. The saved fixture window covers 3 November 2026; change the time picker for live traffic. The dashboard includes a time histogram, source/severity distribution and saved search.
+Ingestion is asynchronous; verify after the queue drains. Verification exits 1 for mismatches and exports `artifacts/reconciliation.json`; queries/analysis also export JSON. The importer writes to the **Global** security tenant and prints a direct `dashboard_url`. Open <http://127.0.0.1:5601/app/dashboards?security_tenant=global#/view/poc-overview> after signing in. A different tenant has a separate saved-object collection and may show no dashboard. The saved fixture window covers 3 November 2026; change the time picker for live traffic. The dashboard includes a time histogram and source/severity distribution; the saved search is imported as a separate object.
+
+If the header loads but the dashboard area is blank, use the direct URL above and check the browser console. The panel definitions include a `version` for OpenSearch Dashboards 3.9.0: omitting it causes `migrations730` to log `Cannot read properties of null (reading 'version')`, even when the import API reports success. After updating the saved objects, rerun `python3 scripts/import_dashboards.py` and reload the direct URL. Successful import and query responses alone do not establish browser rendering; record UI evidence separately.
 
 `make replay` creates an independent cursor over retained identities. A changed-content collision pauses instead of overwriting. Enable the optional API with:
 
