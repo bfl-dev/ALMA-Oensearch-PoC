@@ -3,14 +3,16 @@ import json
 import os
 import tempfile
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from threading import Event, get_ident
 from types import SimpleNamespace
 from unittest.mock import patch
 
 from alma_poc.capture import read_records
 from alma_poc.errors import Retryable, SystemFailure
 from alma_poc.model import INDEX, normalize
-from alma_poc.runtime import SearchSink, _contains, index_definition
+from alma_poc.runtime import HeartbeatingSink, SearchSink, _contains, index_definition
 from alma_poc.sources import generate_corpus, stream
 from alma_poc.verification import reconcile
 
@@ -89,6 +91,28 @@ class SearchProtocolTests(unittest.TestCase):
         with patch.dict(os.environ, {"ALMA_POC_FAILPOINT": "worker.lose_response"}):
             with self.assertRaises(Retryable):
                 self.sink.bulk_create([self.document])
+
+
+class HeartbeatTests(unittest.TestCase):
+    def test_pending_lookup_pumps_broker_without_blocking_its_completion(self):
+        polled = Event()
+        broker_thread = get_ident()
+        document = {"event_id": "existing"}
+
+        def lookup(identifier):
+            self.assertEqual(identifier, document["event_id"])
+            self.assertTrue(polled.wait(timeout=2))
+            return document
+
+        def process_data_events(*, time_limit):
+            polled.set()
+            self.assertEqual(get_ident(), broker_thread)
+            self.assertEqual(time_limit, 0)
+
+        connection = SimpleNamespace(process_data_events=process_data_events)
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            sink = HeartbeatingSink(SimpleNamespace(get=lookup), connection, executor)
+            self.assertEqual(sink.get(document["event_id"]), document)
 
 
 class StreamOracleTests(unittest.TestCase):
