@@ -51,7 +51,7 @@ def fixture(name, *, invalid=False, rejection=False):
     return json.loads(run(command).strip().splitlines()[-1])
 
 
-def wait_for(function, *, seconds=120):
+def wait_for(function, *, seconds=120, description="condition"):
     deadline = time.monotonic() + seconds
     last = None
     while time.monotonic() < deadline:
@@ -62,7 +62,7 @@ def wait_for(function, *, seconds=120):
         except (RuntimeError, ValueError, OSError) as exc:
             last = type(exc).__name__
         time.sleep(2)
-    raise RuntimeError(f"condition did not converge in {seconds}s; last error class={last}")
+    raise RuntimeError(f"{description} did not converge in {seconds}s; last error class={last}")
 
 
 def reconciliation():
@@ -137,8 +137,9 @@ def main():
         report["cases"].append({"case": "baseline", "result": wait_for(reconciliation)})
         for job in (f"acceptance-{run_id}-first", f"acceptance-{run_id}-second"):
             tools("adapter", "--root", "/data/corpus", "--state", "/data/adapter/checkpoints.sqlite", "--once", "--replay", job)
-            wait_for(lambda: pending() == 0)
-            report["cases"].append({"case": job, "result": wait_for(reconciliation)})
+            wait_for(lambda: pending() == 0, description=f"{job}: RabbitMQ queue drain")
+            result = wait_for(reconciliation, description=f"{job}: index and quarantine reconciliation")
+            report["cases"].append({"case": job, "result": result})
         tools("adapter", "--root", "/data/corpus", "--state", "/data/adapter/checkpoints.sqlite", "--once", "--replay", "crash-confirm-" + run_id, expected=86, env=("ALMA_POC_FAILPOINT=adapter.after_confirm",))
         tools("adapter", "--root", "/data/corpus", "--state", "/data/adapter/checkpoints.sqlite", "--once", "--replay", "crash-confirm-" + run_id)
         wait_for(lambda: pending() == 0)

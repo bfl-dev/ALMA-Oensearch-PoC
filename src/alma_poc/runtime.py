@@ -5,7 +5,7 @@ import hashlib
 import json
 import os
 import time
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait
 from pathlib import Path
 
 from .errors import PocError, Retryable, SystemFailure
@@ -238,8 +238,10 @@ class HeartbeatingSink:
 
     def _call(self, name, *args):
         future = self.executor.submit(getattr(self.sink, name), *args)
-        while not future.done():
-            self.connection.process_data_events(time_limit=0.1)
+        # Wake as soon as the search request finishes. A blocking broker poll
+        # here can add 100 ms to every replay conflict lookup.
+        while not wait((future,), timeout=0.1).done:
+            self.connection.process_data_events(time_limit=0)
         return future.result()
 
     def bulk_create(self, documents):
