@@ -1,6 +1,6 @@
 # CT-04 — Investigation, explainable correlation, and patterns
 
-**Status:** proposed for review. RF-05 through RF-08; CA-06 through CA-09. Reads the CT-03 materialization without changing source events.
+**Status:** accepted by owner on 3 November 2026; runtime evidence tracked separately. RF-05 through RF-08; CA-06 through CA-09. Reads the CT-03 materialization without changing source events.
 
 ## Query boundary
 

@@ -1,6 +1,6 @@
 # ADR-0002 — Recovery through redelivery and stable occurrence identity
 
-- Status: **proposed for technical-design review; not approved or runtime-verified**
+- Status: **accepted by owner on 3 November 2026; runtime verification pending**
 - Updated: 3 November 2026
 - Requirements: RF-03, RC-01 through RC-05
 - Contracts: [CT-01](../contracts/ct-01-source.md), [CT-02](../contracts/ct-02-transport.md), [CT-03](../contracts/ct-03-indexing.md)

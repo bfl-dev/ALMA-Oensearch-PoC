@@ -1,6 +1,6 @@
 # Technical-design review guide
 
-**Status:** concrete proposals ready for owner review; no runtime implementation authorized by this document. Branch: `docs/technical-design`. Baseline: merged definition at `fb5a4419317e9b60448b59f07b40061f7fe3cc0f`.
+**Status:** accepted at revision `d5d82cf` on 3 November 2026; implementation explicitly authorized. The remainder preserves the design-review checklist. Current results are in the [implementation evidence](../evidence/implementation.md).
 
 ## What this PR adds
 

@@ -1,6 +1,6 @@
 # Formal project definition
 
-**Status:** project definition approved on 1 November 2026 (America/Santiago). **Approval owner:** project owner. **Architecture:** conceptual C4 approved on 3 November 2026 (America/Santiago). **Implementation:** not started; detailed design, ADRs, contracts, and planning remain the next stages.
+**Status:** project definition approved on 1 November 2026 (America/Santiago). **Approval owner:** project owner. **Architecture:** conceptual C4 approved on 3 November 2026 (America/Santiago). **Technical design:** accepted at revision `d5d82cf`. **Implementation:** initial code under review; live acceptance pending. The dated approval entries below preserve the decision history.
 
 ## Purpose
 
@@ -61,9 +61,11 @@ The demo must cover abrupt producer/adapter and consumer termination, broker res
 
 ## Original delivery target and current status
 
-The original before-3-November target meant **2 November 2026, America/Santiago**. It has elapsed. As of this technical-design PR, there is no implemented demo or measured runtime acceptance evidence. No replacement completion date is invented; establish a realistic schedule from the reviewed design and resource preflight.
+The original before-3-November target meant **2 November 2026, America/Santiago**. It has elapsed. The initial implementation is now under review; measured runtime acceptance evidence remains pending. No replacement completion date is invented; establish a realistic schedule from the reviewed design and resource preflight.
 
 ## Review record
+
+This table preserves the pre-acceptance design review. The later technical-design acceptance entry supersedes its pending decisions. Current execution status is in the [implementation evidence](evidence/implementation.md).
 
 | Item | Scope or remaining decision | Status |
 | --- | --- | --- |
@@ -116,3 +118,11 @@ The original before-3-November target meant **2 November 2026, America/Santiago*
 - Research outcome: [DOC-03](research/acs-feasibility.md) now includes a public-browser follow-up: Confluence and ACS registry metadata are verified; modern schema/runtime and installed footprint remain unverified. Prefer a vetted sanitized export when available; use the XML mock immediately while no corpus exists, with a future main-PC logging-client experiment. This is a technical proposal, not runtime authorization or evidence of ACS incompatibility.
 - Proposed next baseline: ADR-0002/0003, CT-01 through CT-04, candidate versions/resources, and acceptance parameters. See the [review guide](review/technical-design.md) and [task specifications](planning/implementation-tasks.md).
 - Status: research findings documented; technical decisions/contracts await review. Prior scope/C4/Compose approvals remain intact. Runtime acceptance is unexecuted.
+
+### Technical-design acceptance and implementation authorization
+
+- Date: **3 November 2026, America/Santiago**.
+- Owner instruction: **"accepted, now proceed with the implementation"**.
+- Accepted baseline: PR #2 head `d5d82cf5b6490efbeebf691e8ec9630407c05e5f`, merged as `6a7804cdbe12041f8f38770ed9247591664d68ea`.
+- Scope: ADR-0002/0003, CT-01 through CT-04, source admission/fallback, version/resource candidates and acceptance parameters; implement the essential demo and tests.
+- Runtime results remain evidence to obtain. Current execution cannot access the Docker daemon and shell network; neither restriction changes the accepted guarantees.

@@ -1,6 +1,6 @@
-# Architecture: approved conceptual C4 views and pending detailed design
+# Architecture: accepted conceptual C4 and technical design
 
-**Status:** conceptual C4 architecture approved by the owner on 3 November 2026 (America/Santiago); detailed engineering choices remain open. This does not represent an implemented architecture or ALMA's current infrastructure. [ADR-0001](../adr/0001-project-constraints.md) records owner constraints; [ADR-0002](../adr/0002-recovery-and-event-identity.md) proposes how to evaluate them.
+**Status:** conceptual C4 architecture approved by the owner on 3 November 2026 (America/Santiago); detailed engineering choices were subsequently accepted at revision `d5d82cf`. The sections below preserve the design history; see the [implementation evidence](../evidence/implementation.md) for current status. This does not represent ALMA's current infrastructure. [ADR-0001](../adr/0001-project-constraints.md) records owner constraints; [ADR-0002](../adr/0002-recovery-and-event-identity.md) proposes how to evaluate them.
 
 ## C4 level 1 — System context
 

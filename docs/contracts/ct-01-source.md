@@ -1,6 +1,6 @@
 # CT-01 — Source capture and event envelope v1
 
-**Status:** proposed contract for review. RF-01 through RF-04, RC-03/RC-04, CA-01/CA-02/CA-05. A project profile, not an ACS standard or verified integration.
+**Status:** accepted by owner on 3 November 2026; runtime evidence tracked separately. RF-01 through RF-04, RC-03/RC-04, CA-01/CA-02/CA-05. A project profile, not an ACS standard or verified integration.
 
 ## Capture and identity
 
@@ -10,7 +10,7 @@ A retained generation manifest fixes source family/producer/environment, provena
 
 `urn:alma-poc:event:v1:<generation_id>:<sequence>`
 
-Use a decimal sequence without leading zeroes. A frame is accepted only after newline/data sync. `captured_at` is assigned once at first durable project capture and retained on retry/replay. Resume by scanning complete records; unfinished trailing appends were not accepted. Never reuse an accepted sequence.
+Use a decimal sequence without leading zeroes. A frame is accepted only after newline/data sync. The implementation also atomically syncs a `committed.json` sequence/prefix watermark before exposing it to readers. Recovery can adopt complete pending frames after syncing them; incomplete tails remain unaccepted. `captured_at` is assigned once at first durable project capture and retained on retry/replay. Resume by scanning complete records; unfinished trailing appends were not accepted. Never reuse an accepted sequence.
 
 At most 65,536 decoded raw bytes and 131,072 serialized UTF-8 envelope/frame bytes excluding the newline. Empty raw records are valid transport for invalid-payload fixtures. Strict canonical base64 and matching SHA-256 are required. Schema validation alone cannot enforce decoded size, digest, coordinate equality, or provenance.
 

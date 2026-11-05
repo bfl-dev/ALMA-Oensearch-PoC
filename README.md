@@ -2,11 +2,11 @@
 
 Personal project to demonstrate reliable log ingestion and incident investigation with OpenSearch, in preparation for an ALMA 2027 internship application.
 
-**Status: scope and conceptual C4 approved; technical design and contracts proposed for review. No application code or runnable demo exists yet.**
+**Status: technical design accepted; initial implementation available for review. Core tests and Compose configuration checks are available; live Docker acceptance and resource fit remain pending.**
 
 This is an independent learning project. Its architectural inspiration is a historical ALMA publication; it does not describe or claim access to ALMA's current infrastructure.
 
-## Intended demonstration
+## Implemented for review
 
 - Ingest ACS ONLINE XML logs and simulated OFFLINE web/API logs through persistent RabbitMQ messaging.
 - Combine continuous ingestion and historical replay while preserving event identity.
@@ -14,7 +14,7 @@ This is an independent learning project. Its architectural inspiration is a hist
 - Search and visualize logs, reconstruct an incident, explain automatic correlations, and discover recurring message patterns.
 - Document Elasticsearch-to-OpenSearch migration considerations without performing a migration.
 
-These are project goals, **not implemented capabilities**. Scope, conceptual C4, and Docker Compose are approved. [ACS feasibility](docs/research/acs-feasibility.md), [detailed decisions](docs/adr/README.md), and [contracts](docs/contracts/README.md) now provide concrete proposals for review.
+The Python implementation includes synthetic sources, durable capture, confirmed publication, replay, deterministic indexing/quarantine, queries, saved dashboard objects and analysis. These capabilities still require live RabbitMQ/OpenSearch validation. No real ACS integration is claimed. See the [runbook](docs/running.md) and [evidence record](docs/evidence/implementation.md).
 
 ## Documentation
 
@@ -34,13 +34,23 @@ Start at the [documentation index](docs/README.md), then review the [project sco
 
 English is the working language for documentation, diagrams, templates, issues, pull requests, and commit messages. The repository URL retains its original spelling, `ALMA-Oensearch-PoC`.
 
-## Target and next gate
+## Run and validate
 
-The original target was a presentable demo before 3 November 2026 (completion by 2 November, America/Santiago). That target has elapsed; no runnable demo has been delivered and no replacement date is promised here.
+Use a local Linux/amd64 Docker Engine with Compose, Python 3, uv and network access. Preflight enforces the temporary host's 10 GB project disk allowance and 7.25 GiB available-memory requirement. It stops if fit cannot be established.
 
-The next gate is review of the proposed tooling/source fallback, recovery/identity rules, CT-01 through CT-04, and measurable acceptance parameters. [Issue-ready tasks](docs/planning/implementation-tasks.md) prepare implementation after that review and explicit runtime authorization.
+```sh
+make test
+make config
+make preflight
+make build
+python3 scripts/acceptance.py
+```
 
-The temporary host has an i5-11300H, 16 GB total RAM, and a 10 GB project storage allowance. Docker Compose is accepted; a more powerful main PC is planned. Resource limits are configurable proposals, not permanent project ceilings or measured performance. See [architecture](docs/architecture/README.md).
+The acceptance runner needs an empty isolated Compose project. Read the [runbook](docs/running.md) first. Preflight generates private credentials, digest references and a hashed dependency lock; no package/image substitution occurs. The live stack has not been started from this restricted session.
+
+For interactive use after setup: `make up`, `make corpus`, `make verify`, `make queries`, `make analyze`, then `python3 scripts/import_dashboards.py`. Dashboards binds to <http://127.0.0.1:5601>. `make down` retains volumes. Do not publish the generated `.env`.
+
+The original 2 November 2026 target elapsed. M1 remains open until runtime evidence supports the acceptance criteria. The i5-11300H/16 GB host is temporary; a future main PC requires new preflight measurements. See the [documentary migration assessment](docs/research/elasticsearch-migration.md).
 
 ## License
 

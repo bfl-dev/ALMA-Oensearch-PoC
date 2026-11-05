@@ -1,6 +1,6 @@
 # Component contracts
 
-**Status:** proposed v1 contracts for technical-design review. Static schemas and examples specify interfaces; they are not a running pipeline or approved implementation.
+**Status:** v1 contracts accepted at revision `d5d82cf` on 3 November 2026. Initial implementation is under review; runtime acceptance is separate.
 
 | Contract | Boundary and content | Acceptance |
 | --- | --- | --- |
@@ -22,6 +22,6 @@ Read [ADR-0002](../adr/0002-recovery-and-event-identity.md) and [ADR-0003](../ad
 - Keep parser version and concrete index stable for one materialization/replay window. Explicit corrections create a versioned materialization, preserving original identities/evidence.
 - Reject unknown envelope properties/versions until a reviewed compatibility update. Keep supplied source formats separate from this project's capture framing.
 
-## Review outcome needed
+## Review outcome
 
-Accept or amend the exact profiles, identity/destination rules, SQLite/tooling proposal, unsupported-TAI behavior, resource/version candidates, and quantitative validation settings. Source integration, schema/example format checks, and runtime acceptance are separate evidence levels. No implementation authorization is inferred from this PR or its merge.
+Owner accepted the design and authorized implementation. See the [acceptance record](../project-definition.md#technical-design-acceptance-and-implementation-authorization). Source admission and runtime acceptance remain separate evidence levels; see the [implementation evidence](../evidence/implementation.md).
