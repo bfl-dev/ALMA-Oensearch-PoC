@@ -5,7 +5,7 @@ import unittest
 from collections import deque
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from scripts import boundary_checks, boundary_fixture
 
@@ -20,12 +20,20 @@ class Broker:
     def __init__(self):
         self.queues = {}
         self.limits = {}
+        self.requeues = []
+        self.sleep_calls = 0
+
+    def sleep(self, seconds):
+        self.sleep_calls += 1
+        for queue, body in self.requeues:
+            self.queues[queue].appendleft(body)
+        self.requeues.clear()
 
     def connect(self, *, queue_name, max_queue_bytes=64 * 1024 * 1024):
         self.queues.setdefault(queue_name, deque())
         self.limits[queue_name] = max_queue_bytes
         channel = Channel(self)
-        connection = SimpleNamespace(close=channel.close)
+        connection = SimpleNamespace(close=channel.close, sleep=self.sleep)
         pika = SimpleNamespace(BasicProperties=SimpleNamespace,
                                exceptions=SimpleNamespace(NackError=NackError))
         return pika, connection, channel
@@ -67,7 +75,9 @@ class Channel:
         if not requeue:
             raise AssertionError("unresolved deliveries must be retained")
         queue, body = self.deliveries.pop(delivery_tag)
-        self.broker.queues[queue].appendleft(body)
+        # Model asynchronous nack handling: I/O must make progress before
+        # a requeued message becomes ready again.
+        self.broker.requeues.append((queue, body))
 
     def queue_declare(self, *, queue, passive):
         if not passive:
@@ -114,6 +124,25 @@ class BoundaryProtocolTests(unittest.TestCase):
             self.assertEqual(capacity["checkpoint_after_retry"], 2)
             self.assertEqual(quarantine["quarantined_after_retry"], 2)
             self.assertEqual(quarantine["pending_after_recovery"], 0)
+            self.assertTrue(collision["redelivered_envelope_verified"])
+            self.assertGreaterEqual(broker.sleep_calls, 4)
+
+    def test_missing_requeue_still_fails_within_the_deadline(self):
+        channel = SimpleNamespace(
+            queue_declare=lambda **_: SimpleNamespace(method=SimpleNamespace(message_count=0)))
+        connection = SimpleNamespace(sleep=Mock())
+        with patch.object(boundary_fixture.time, "monotonic", side_effect=[0, 0, 1]):
+            with self.assertRaisesRegex(boundary_fixture.BoundaryFailure, "expected 1 ready messages, observed 0"):
+                boundary_fixture.wait_for_count(connection, channel, "queue", 1, timeout=0.1)
+        connection.sleep.assert_called_once()
+
+    def test_missing_delivery_does_not_pass_on_count_alone(self):
+        channel = SimpleNamespace(basic_get=lambda **_: (None, None, None))
+        connection = SimpleNamespace(sleep=Mock())
+        with patch.object(boundary_fixture.time, "monotonic", side_effect=[0, 0, 1]):
+            with self.assertRaisesRegex(boundary_fixture.BoundaryFailure, "did not become available"):
+                boundary_fixture.fetch(connection, channel, "queue", timeout=0.1)
+        connection.sleep.assert_called_once()
 
     def test_collision_fixture_rejects_overwriting_index_behavior(self):
         with tempfile.TemporaryDirectory() as temporary, patch.object(
